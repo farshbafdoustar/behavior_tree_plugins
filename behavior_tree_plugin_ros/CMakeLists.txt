@@ -36,6 +36,7 @@ include_directories(
 
 add_library(${PROJECT_NAME}
   src/call_any_service.cpp
+  src/ros_wrapper.cpp
 )
 
 

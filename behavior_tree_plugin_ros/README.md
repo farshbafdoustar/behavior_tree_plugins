@@ -63,3 +63,4 @@ Automatically Generated BT Node for [SwitchController Service](http://docs.ros.o
 - [ ] PublishAnyTopic
 - [ ] SubscribeAnyTopic
 - [ ] CallAnyAction
+- [ ] RosWrapper : register all of its childrens and Publishes NodeStatus in a topic named : ROS NodeName/Status (Success/Failure/Running) and Subscribe to NodeName/Run to tick the node

@@ -38,3 +38,7 @@ Automatically Generated BT Node for [SwitchController Service](http://docs.ros.o
     response.ok="{response_ok}"
 />
 ```
+### TODO:
+- [ ] Example Package
+    - [ ] Generate BT node in CLI for a given Message
+    - [ ] Docker image for fast evaluation

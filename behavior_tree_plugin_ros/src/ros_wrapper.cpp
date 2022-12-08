@@ -72,7 +72,7 @@ void RosWrapper::initialize()
     status.data=getIdleCode();
     children_status.push_back(status);
 
-    bool run_command=-1;
+    int run_command=-1;
     children_run_command_.push_back(run_command);
     auto run_command_call_back=[&](const std_msgs::BoolConstPtr& msg,const int& i,std::string & topic_name) {
       children_run_command_[i] = msg->data;

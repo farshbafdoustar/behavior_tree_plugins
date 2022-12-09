@@ -20,11 +20,11 @@ BT::PortsList RosWrapper::providedPorts()
 
 std::string RosWrapper::getStatusTopicName()
 {
-  return "Status";
+  return "status";
 }
 std::string RosWrapper::getCommandTopicName()
 {
-  return "Run";
+  return "tick";
 }
 
 int RosWrapper::getIdleCode()
@@ -63,7 +63,7 @@ void RosWrapper::initialize()
   {
     BT::TreeNode* child_node = children_nodes_[i];
     std::string topic_name_status=child_node->name()+"/"+getStatusTopicName();
-    std::string topic_name_run_command=child_node->name()+"/"+getCommandTopicName();
+    std::string topic_name_command=child_node->name()+"/"+getCommandTopicName();
     
     auto status_publisher = node_handle_.advertise<std_msgs::Int32>(topic_name_status, 1);
     children_status_publisher_.push_back(status_publisher);
@@ -72,17 +72,19 @@ void RosWrapper::initialize()
     status.data=getIdleCode();
     children_status.push_back(status);
 
-    int run_command=-1;
-    children_run_command_.push_back(run_command);
-    auto run_command_call_back=[&](const std_msgs::BoolConstPtr& msg,const int& i,std::string & topic_name) {
-      children_run_command_[i] = msg->data;
-      ROS_INFO_STREAM("callback received:"<<topic_name );
-    };
-    children_run_command_call_back_.push_back(run_command_call_back);
+    int command=-1;
+    children_command_.push_back(command);
+    if(getCommandTopicName()!="")
+    {
+      auto command_call_back=[&](const std_msgs::BoolConstPtr& msg,const int& i,std::string & topic_name) {
+        children_command_[i] = msg->data;
+        ROS_INFO_STREAM("callback received:"<<topic_name );
+      };
+      children_command_call_back_.push_back(command_call_back);
 
-    auto run_command_subscriber=node_handle_.subscribe<std_msgs::Bool>(topic_name_run_command, 1, boost::bind(children_run_command_call_back_[i], _1, i,topic_name_run_command) );
-    children_run_command_subscriber_.push_back(run_command_subscriber);
-    
+      auto command_subscriber=node_handle_.subscribe<std_msgs::Bool>(topic_name_command, 1, boost::bind(children_command_call_back_[i], _1, i,topic_name_command) );
+      children_command_subscriber_.push_back(command_subscriber);
+    }
     
     
 
@@ -123,7 +125,7 @@ BT::NodeStatus RosWrapper::tick()
   //   child_node_.config().blackboard.set(port_name,value);
 
   // }
-  if(children_run_command_[i]==1 || isRunAlwaysActive() )
+  if(children_command_[i]==1 || isRunAlwaysActive() )
   {
     const BT::NodeStatus child_state = child_node->executeTick();
      switch (child_state)
@@ -131,14 +133,14 @@ BT::NodeStatus RosWrapper::tick()
             case BT::NodeStatus::SUCCESS:
             {
                 children_status[i].data=getSuccessCode();
-                children_run_command_[i]=-1;
+                children_command_[i]=-1;
             }
             break;
 
             case BT::NodeStatus::FAILURE:
             {
               children_status[i].data=getFailureCode();
-              children_run_command_[i]=-1;
+              children_command_[i]=-1;
             }
             break;
 
@@ -154,7 +156,7 @@ BT::NodeStatus RosWrapper::tick()
                 throw BT::LogicError("A child node must never return IDLE");
             }
         }
-    }else if(children_run_command_[i]==0)
+    }else if(children_command_[i]==0)
     {
       haltChild(i);
       children_status[i].data=getIdleCode();

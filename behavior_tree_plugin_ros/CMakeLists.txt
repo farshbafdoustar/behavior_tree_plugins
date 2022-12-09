@@ -20,7 +20,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES behavior_tree_plugin_ros
+  LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS    ${ROS_DEPENDENCIES}
 )
 #############

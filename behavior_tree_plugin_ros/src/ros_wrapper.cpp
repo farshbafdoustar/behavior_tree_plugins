@@ -57,6 +57,8 @@ bool RosWrapper::isRunAlwaysActive()
 
 void RosWrapper::initialize()
 {
+  reset_command.data=false;
+
   const size_t children_count = children_nodes_.size();
 
   for (unsigned int i = 0; i < children_count; i++)
@@ -67,6 +69,8 @@ void RosWrapper::initialize()
     
     auto status_publisher = node_handle_.advertise<std_msgs::Int32>(topic_name_status, 1);
     children_status_publisher_.push_back(status_publisher);
+    auto reset_command_publisher = node_handle_.advertise<std_msgs::Bool>(topic_name_command, 1);
+    children_reset_command_publisher_.push_back(reset_command_publisher);
 
     std_msgs::Int32 status;
     status.data=getIdleCode();
@@ -134,6 +138,7 @@ BT::NodeStatus RosWrapper::tick()
             {
                 children_status[i].data=getSuccessCode();
                 children_command_[i]=-1;
+                children_reset_command_publisher_[i].publish(reset_command);
             }
             break;
 
@@ -141,6 +146,7 @@ BT::NodeStatus RosWrapper::tick()
             {
               children_status[i].data=getFailureCode();
               children_command_[i]=-1;
+              children_reset_command_publisher_[i].publish(reset_command);
             }
             break;
 

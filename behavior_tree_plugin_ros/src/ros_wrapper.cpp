@@ -162,7 +162,8 @@ BT::NodeStatus RosWrapper::tick()
                 throw BT::LogicError("A child node must never return IDLE");
             }
         }
-    }else if(children_command_[i]==0)
+        children_status_publisher_[i].publish(children_status[i]);
+    }else if(children_command_[i]==0 && children_status[i].data==getRunningCode())
     {
       haltChild(i);
       children_status[i].data=getIdleCode();
@@ -176,7 +177,7 @@ BT::NodeStatus RosWrapper::tick()
     //   child_node_.config().blackboard.get(port_name,value);
     //   publisher.publish(value);
     // }
-    children_status_publisher_[i].publish(children_status[i]); 
+     
   }
   
   

@@ -170,14 +170,14 @@ BT::NodeStatus RosWrapper::tick()
                 throw BT::LogicError("A child node must never return IDLE");
             }
         }
-        children_status_publisher_[i].publish(children_status[i]);
+        
     }else if(children_command_[i]==0 && children_status[i].data==getRunningCode())
     {
       haltChild(i);
       children_status[i].data=getIdleCode();
-      children_status_publisher_[i].publish(children_status[i]);
       
     }
+    children_status_publisher_[i].publish(children_status[i]);
      // publish topics based on output ports
     // for(auto port_name_info:child_node_.config().output_ports)
     // {

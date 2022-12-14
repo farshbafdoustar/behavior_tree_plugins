@@ -40,6 +40,7 @@ namespace behavior_tree_plugin_ros
     std::vector<ros::Publisher> children_reset_command_publisher_;
     std::vector<int> children_command_;
     std::vector<boost::function<void (const std_msgs::BoolConstPtr&,const int&,std::string &)>> children_command_call_back_;
+    std::vector<boost::function<void (const ros::WallTimerEvent&,const int& )>> children_reset_status_call_back_;
     std::vector<std_msgs::Int16> children_status;
     std_msgs::Bool reset_command;
 

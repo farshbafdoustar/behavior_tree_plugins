@@ -89,6 +89,11 @@ void RosWrapper::initialize()
       auto command_subscriber=node_handle_.subscribe<std_msgs::Bool>(topic_name_command, 1, boost::bind(children_command_call_back_[i], _1, i,topic_name_command) );
       children_command_subscriber_.push_back(command_subscriber);
     }
+
+    auto reset_status_timer_call_back=[&](const ros::WallTimerEvent& event,const int& i) {
+                children_status[i].data=getIdleCode();
+              };
+    children_reset_status_call_back_.push_back(reset_status_timer_call_back);
     
     
 
@@ -139,10 +144,7 @@ BT::NodeStatus RosWrapper::tick()
                 children_status[i].data=getSuccessCode();
                 children_command_[i]=-1;
                 children_reset_command_publisher_[i].publish(reset_command);
-                boost::function<void (const ros::WallTimerEvent&,const int& )> timer_call_back=[&](const ros::WallTimerEvent& event,const int& i) {
-                  children_status[i].data=getIdleCode();
-                };
-                node_handle_.createWallTimer(ros::WallDuration(5), boost::bind(timer_call_back, _1,i),true);
+                node_handle_.createWallTimer(ros::WallDuration(5), boost::bind(children_reset_status_call_back_[i], _1,i),true);
             }
             break;
 
@@ -151,10 +153,8 @@ BT::NodeStatus RosWrapper::tick()
               children_status[i].data=getFailureCode();
               children_command_[i]=-1;
               children_reset_command_publisher_[i].publish(reset_command);
-              boost::function<void (const ros::WallTimerEvent&,const int& )> timer_call_back=[&](const ros::WallTimerEvent& event,const int& i) {
-                children_status[i].data=getIdleCode();
-              };
-              node_handle_.createWallTimer(ros::WallDuration(5), boost::bind(timer_call_back, _1,i),true);
+              
+              node_handle_.createWallTimer(ros::WallDuration(5), boost::bind(children_reset_status_call_back_[i], _1,i),true);
             }
             break;
 

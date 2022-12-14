@@ -67,12 +67,12 @@ void RosWrapper::initialize()
     std::string topic_name_status=child_node->name()+"/"+getStatusTopicName();
     std::string topic_name_command=child_node->name()+"/"+getCommandTopicName();
     
-    auto status_publisher = node_handle_.advertise<std_msgs::Int32>(topic_name_status, 1);
+    auto status_publisher = node_handle_.advertise<std_msgs::Int16>(topic_name_status, 1);
     children_status_publisher_.push_back(status_publisher);
     auto reset_command_publisher = node_handle_.advertise<std_msgs::Bool>(topic_name_command, 1);
     children_reset_command_publisher_.push_back(reset_command_publisher);
 
-    std_msgs::Int32 status;
+    std_msgs::Int16 status;
     status.data=getIdleCode();
     children_status.push_back(status);
 
@@ -167,6 +167,7 @@ BT::NodeStatus RosWrapper::tick()
     {
       haltChild(i);
       children_status[i].data=getIdleCode();
+      children_status_publisher_[i].publish(children_status[i]);
       
     }
      // publish topics based on output ports

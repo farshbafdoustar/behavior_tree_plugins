@@ -44,6 +44,58 @@ int RosWrapper::getFailureCode()
   return 3;
 }
 
+void RosWrapper::OnChildSuccess(int i)
+{
+  children_status[i].data=getSuccessCode();
+  if(children_command_.size()>0)
+  {
+    children_command_[i]=-1;
+  }
+}
+void RosWrapper::OnChildFailure(int i)
+{
+  children_status[i].data=getFailureCode();
+  if(children_command_.size()>0)
+  {
+    children_command_[i]=-1;
+  }
+}
+void RosWrapper::OnChildRunning(int i)
+{
+  children_status[i].data=getRunningCode();
+}
+void RosWrapper::OnChildStatusInitialize(int i)
+{
+  BT::TreeNode* child_node = children_nodes_[i];
+  std::string topic_name_status=child_node->name()+"/"+getStatusTopicName();
+  
+  auto status_publisher = node_handle_.advertise<std_msgs::Int16>(topic_name_status, 1);
+  children_status_publisher_.push_back(status_publisher);
+  
+  std_msgs::Int16 status;
+  status.data=getIdleCode();
+  children_status.push_back(status);
+}
+void RosWrapper::OnChildCommandInitialize(int i)
+{
+  BT::TreeNode* child_node = children_nodes_[i];
+  std::string topic_name_command=child_node->name()+"/"+getCommandTopicName();
+
+  
+  auto command_call_back=[&](const std_msgs::BoolConstPtr& msg,const int& i,std::string & topic_name) {
+    children_command_[i] = msg->data;
+    ROS_INFO_STREAM("callback received:"<<topic_name );
+  };
+  children_command_call_back_.push_back(command_call_back);
+
+  auto command_subscriber=node_handle_.subscribe<std_msgs::Bool>(topic_name_command, 1, boost::bind(children_command_call_back_[i], _1, i,topic_name_command) );
+  children_command_subscriber_.push_back(command_subscriber);
+  
+  int command=-1;
+  children_command_.push_back(command); 
+  
+}
+
 bool RosWrapper::isRunAlwaysActive()
 {
   BT::Optional<bool> run_always = getInput<bool>("run_always");
@@ -57,45 +109,15 @@ bool RosWrapper::isRunAlwaysActive()
 
 void RosWrapper::initialize()
 {
-  reset_command.data=false;
-
   const size_t children_count = children_nodes_.size();
 
   for (unsigned int i = 0; i < children_count; i++)
   {
-    BT::TreeNode* child_node = children_nodes_[i];
-    std::string topic_name_status=child_node->name()+"/"+getStatusTopicName();
-    std::string topic_name_command=child_node->name()+"/"+getCommandTopicName();
-    
-    auto status_publisher = node_handle_.advertise<std_msgs::Int16>(topic_name_status, 1);
-    children_status_publisher_.push_back(status_publisher);
-    auto reset_command_publisher = node_handle_.advertise<std_msgs::Bool>(topic_name_command, 1);
-    children_reset_command_publisher_.push_back(reset_command_publisher);
-
-    std_msgs::Int16 status;
-    status.data=getIdleCode();
-    children_status.push_back(status);
-
-    int command=-1;
-    children_command_.push_back(command);
+     OnChildStatusInitialize(i);
     if(getCommandTopicName()!="")
     {
-      auto command_call_back=[&](const std_msgs::BoolConstPtr& msg,const int& i,std::string & topic_name) {
-        children_command_[i] = msg->data;
-        ROS_INFO_STREAM("callback received:"<<topic_name );
-      };
-      children_command_call_back_.push_back(command_call_back);
-
-      auto command_subscriber=node_handle_.subscribe<std_msgs::Bool>(topic_name_command, 1, boost::bind(children_command_call_back_[i], _1, i,topic_name_command) );
-      children_command_subscriber_.push_back(command_subscriber);
+      OnChildCommandInitialize(i);
     }
-
-    auto reset_status_timer_call_back=[&](const ros::WallTimerEvent& event,const int& i) {
-                children_status[i].data=getIdleCode();
-              };
-    children_reset_status_call_back_.push_back(reset_status_timer_call_back);
-    
-    
 
     // BT::PortsList child_ports_=child_node_.getPorts();
     //   for(auto port_name_info:child_ports)
@@ -134,44 +156,27 @@ BT::NodeStatus RosWrapper::tick()
   //   child_node_.config().blackboard.set(port_name,value);
 
   // }
-  if(children_command_[i]==1 || isRunAlwaysActive() )
+  if(isRunAlwaysActive() || (children_command_.size()>0 &&children_command_[i]==1))
   {
     const BT::NodeStatus child_state = child_node->executeTick();
      switch (child_state)
-        {
-            case BT::NodeStatus::SUCCESS:
-            {
-                children_status[i].data=getSuccessCode();
-                children_command_[i]=-1;
-                children_reset_command_publisher_[i].publish(reset_command);
-                node_handle_.createWallTimer(ros::WallDuration(5), boost::bind(children_reset_status_call_back_[i], _1,i),true);
-            }
+      {
+          case BT::NodeStatus::SUCCESS:
+            OnChildSuccess(i);
             break;
 
-            case BT::NodeStatus::FAILURE:
-            {
-              children_status[i].data=getFailureCode();
-              children_command_[i]=-1;
-              children_reset_command_publisher_[i].publish(reset_command);
-              
-              node_handle_.createWallTimer(ros::WallDuration(5), boost::bind(children_reset_status_call_back_[i], _1,i),true);
-            }
+          case BT::NodeStatus::FAILURE:
+            OnChildFailure(i);
+            break;
+          case BT::NodeStatus::RUNNING:
+            OnChildRunning(i);
             break;
 
-            case BT::NodeStatus::RUNNING:
-            {
-              children_status[i].data=getRunningCode();
-                
-            }
-            break;
-
-            default:
-            {
-                throw BT::LogicError("A child node must never return IDLE");
-            }
-        }
+          default:
+            throw BT::LogicError("A child node must never return IDLE");
+      }
         
-    }else if(children_command_[i]==0 && children_status[i].data==getRunningCode())
+    }else if(children_command_.size()>0 && children_command_[i]==0 && children_status[i].data==getRunningCode())
     {
       haltChild(i);
       children_status[i].data=getIdleCode();

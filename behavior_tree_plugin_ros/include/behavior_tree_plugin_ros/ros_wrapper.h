@@ -31,18 +31,24 @@ namespace behavior_tree_plugin_ros
     virtual int getRunningCode();
     virtual int getSuccessCode();
     virtual int getFailureCode();
+    virtual void OnChildSuccess(int i);
+    virtual void OnChildFailure(int i);
+    virtual void OnChildRunning(int i);
+    virtual void OnChildCommandInitialize(int i);
+    virtual void OnChildStatusInitialize(int i);
 
     virtual bool isRunAlwaysActive();
-  private:
+  protected:
     ros::NodeHandle& node_handle_;
-    std::vector<ros::Subscriber> children_command_subscriber_;
-    std::vector<ros::Publisher> children_status_publisher_;
-    std::vector<ros::Publisher> children_reset_command_publisher_;
-    std::vector<int> children_command_;
-    std::vector<boost::function<void (const std_msgs::BoolConstPtr&,const int&,std::string &)>> children_command_call_back_;
-    std::vector<boost::function<void (const ros::WallTimerEvent&,const int& )>> children_reset_status_call_back_;
     std::vector<std_msgs::Int16> children_status;
-    std_msgs::Bool reset_command;
+    std::vector<ros::Publisher> children_status_publisher_;
+    
+    std::vector<int> children_command_;
+    std::vector<ros::Subscriber> children_command_subscriber_;
+    std::vector<boost::function<void (const std_msgs::BoolConstPtr&,const int&,std::string &)>> children_command_call_back_;
+    private:
+    
+    
 
 
   };

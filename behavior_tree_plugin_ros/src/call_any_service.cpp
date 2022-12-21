@@ -2,20 +2,20 @@
 
 namespace behavior_tree_plugin_ros
 {
-CallAnyService::CallAnyService(const std::string& name, const BT::NodeConfiguration& config, std::string service_type)
+CallAnyService::CallAnyService(const std::string& name, const BT::NodeConfig& config, std::string service_type)
   : BT::SyncActionNode(name, config), service_type_(service_type)
 
 {
   ROS_INFO_STREAM("CallAnyService: " << this->name());
 
-  BT::Optional<std::string> service_name = getInput<std::string>("service_name");
+  BT::Expected<std::string> service_name = getInput<std::string>("service_name");
   // Check if optional is valid. If not, throw its error
   if (!service_name)
   {
     throw BT::RuntimeError("missing required input [service_name]: ", service_name.error());
   }
 
-  BT::Optional<double> connection_timeout_ms = getInput<double>("connection_timeout_ms");
+  BT::Expected<double> connection_timeout_ms = getInput<double>("connection_timeout_ms");
   // Check if optional is valid. If not, throw its error
   if (!connection_timeout_ms)
   {
@@ -548,7 +548,7 @@ inline std::vector<std::string> convertFromString(StringView str)
   if (!str.empty())
   {
     std::string name;
-    std::istringstream names_stream(str.to_string());
+    std::istringstream names_stream(std::string(name), std::ios_base::in);
 
     while (std::getline(names_stream, name, ';'))
     {

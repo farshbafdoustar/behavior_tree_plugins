@@ -25,7 +25,7 @@
   <exec_depend>roscpp</exec_depend>
   <exec_depend>message_generation</exec_depend>
 
-  <depend>behaviortree_cpp_v3</depend>
+  <depend>behaviortree_cpp</depend>
   <depend>std_msgs</depend>
   <depend>actionlib_msgs</depend>
   <depend>actionlib</depend>

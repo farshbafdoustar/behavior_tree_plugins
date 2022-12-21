@@ -1,7 +1,7 @@
 #ifndef BEHAVIOR_TREE_PLUGIN_ROS_CALL_ANY_SERVICE_H
 #define BEHAVIOR_TREE_PLUGIN_ROS_CALL_ANY_SERVICE_H
 
-#include "behaviortree_cpp_v3/action_node.h"
+#include "behaviortree_cpp/action_node.h"
 #include <ros/ros.h>
 #include <ros_babel_fish/babel_fish.h>
 #include <ros_babel_fish/message_types.h>
@@ -11,7 +11,7 @@ namespace behavior_tree_plugin_ros
 class CallAnyService : public BT::SyncActionNode
 {
 public:
-  CallAnyService(const std::string& name, const BT::NodeConfiguration& config, std::string service_type);
+  CallAnyService(const std::string& name, const BT::NodeConfig& config, std::string service_type);
   static BT::PortsList getPorts(std::string service_type);
   BT::NodeStatus tick() override;
   static void makePortList(BT::PortsList& local_port_list, const BT::PortDirection& port_direction,

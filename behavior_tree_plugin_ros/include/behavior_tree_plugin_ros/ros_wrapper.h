@@ -2,8 +2,8 @@
 #define BEHAVIOR_TREE_PLUGIN_ROS_ROS_WRAPPER_H
 
 
-#include <behaviortree_cpp_v3/control_node.h>
-#include <behaviortree_cpp_v3/bt_factory.h>
+#include <behaviortree_cpp/control_node.h>
+#include <behaviortree_cpp/bt_factory.h>
 
 #include <ros/ros.h>
 #include <std_msgs/Bool.h>
@@ -16,7 +16,7 @@ namespace behavior_tree_plugin_ros
   {
   public:
 
-    RosWrapper(const std::string& name, const BT::NodeConfiguration& config, ros::NodeHandle& node_handle);
+    RosWrapper(const std::string& name, const BT::NodeConfig& config, ros::NodeHandle& node_handle);
     virtual ~RosWrapper() override = default;
     void initialize();
     BT::NodeStatus tick() override;

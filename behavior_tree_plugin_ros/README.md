@@ -15,7 +15,7 @@ auto bt_name="SwitchController";
 BT::PortsList node_ports = behavior_tree_plugin_ros::CallAnyService::getPorts(service_type);
 
 BT::NodeBuilder builder_call_any_service =
-    [&, service_type = service_type](const std::string& name, const BT::NodeConfiguration& config) {
+    [&, service_type = service_type](const std::string& name, const BT::NodeConfig& config) {
         return std::make_unique<behavior_tree_plugin_ros::CallAnyService>(name, config, service_type);
     };
 

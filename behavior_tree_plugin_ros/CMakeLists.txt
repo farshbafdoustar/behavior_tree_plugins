@@ -2,11 +2,11 @@ cmake_minimum_required(VERSION 2.8.3)
 project(behavior_tree_plugin_ros)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++17)
 
 set(ROS_DEPENDENCIES
     roscpp
-    behaviortree_cpp_v3
+    behaviortree_cpp
     std_msgs
     actionlib_msgs
     actionlib

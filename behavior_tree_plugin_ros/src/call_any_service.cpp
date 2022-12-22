@@ -3,7 +3,10 @@
 namespace behavior_tree_plugin_ros
 {
 CallAnyService::CallAnyService(const std::string& name, const BT::NodeConfig& config, std::string service_type)
-  : BT::SyncActionNode(name, config), service_type_(service_type), fish_(new ros_babel_fish::BabelFish())
+  : BT::SyncActionNode(name, config)
+  , service_type_(service_type)
+  , fish_(new ros_babel_fish::BabelFish())
+  , tree_node_manager_(nullptr)
 
 {
   BT::Expected<std::string> service_name = getInput<std::string>("service_name");

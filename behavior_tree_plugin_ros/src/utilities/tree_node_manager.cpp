@@ -146,7 +146,7 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& request
     for (size_t i = 0; i < compound.keys().size(); ++i)
     {
       std::string name = compound.keys()[i];
-      ROS_DEBUG_STREAM("Filling request field from port: " << (prefix == "" ? name : prefix + "." + name));
+      // ROS_DEBUG_STREAM("Filling message from input port: " << (prefix == "" ? name : prefix + "." + name));
 
       fillMessageFromInputPorts(compound[name], prefix == "" ? name : prefix + "." + name);
     }
@@ -358,7 +358,7 @@ void TreeNodeManager::fillOutputPortsWithMessage(ros_babel_fish::Message& respon
     for (size_t i = 0; i < compound.keys().size(); ++i)
     {
       std::string name = compound.keys()[i];
-      ROS_DEBUG_STREAM("Filling output ports from response: " << (prefix == "" ? name : prefix + "." + name));
+      // ROS_DEBUG_STREAM("Filling output ports with message: " << (prefix == "" ? name : prefix + "." + name));
 
       fillOutputPortsWithMessage(compound[name], prefix == "" ? name : prefix + "." + name);
     }

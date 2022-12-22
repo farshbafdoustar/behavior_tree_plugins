@@ -10,6 +10,7 @@ SubscribeAnyTopic::SubscribeAnyTopic(const std::string& name, const BT::NodeConf
   , node_handle_(node_handle)
   , topic_type_(topic_type)
   , fish_(new ros_babel_fish::BabelFish())
+  , tree_node_manager_(nullptr)
 
 {
   BT::Expected<std::string> topic_name = getInput<std::string>("topic_name");
@@ -42,18 +43,25 @@ BT::NodeStatus SubscribeAnyTopic::tick()
   if (!message_)
   {
     ros::getGlobalCallbackQueue()->callAvailable(ros::WallDuration(0));
-    return BT::NodeStatus::RUNNING;
+    return BT::NodeStatus::FAILURE;
   }
   else
   {
     ROS_DEBUG_STREAM("SubscribeAnyTopic: " << topic_name_);
+    ROS_DEBUG_STREAM("SubscribeAnyTopic: " << 1);
     ros_babel_fish::TranslatedMessage::Ptr translated = fish_->translateMessage(message_);
+    ROS_DEBUG_STREAM("SubscribeAnyTopic: " << 2);
     if (!tree_node_manager_)
     {
+      ROS_DEBUG_STREAM("SubscribeAnyTopic: " << 3);
       tree_node_manager_ = new TreeNodeManager(*this);
+      ROS_DEBUG_STREAM("SubscribeAnyTopic: " << 4);
     }
+    ROS_DEBUG_STREAM("SubscribeAnyTopic: " << 5);
     tree_node_manager_->fillOutputPortsWithMessage(*translated->translated_message, "");
+    ROS_DEBUG_STREAM("SubscribeAnyTopic: " << 6);
     message_ = nullptr;
+    ROS_DEBUG_STREAM("SubscribeAnyTopic: " << 7);
     return BT::NodeStatus::SUCCESS;
   }
 }
@@ -74,6 +82,8 @@ void SubscribeAnyTopic::Register(BT::BehaviorTreeFactory& factory, const std::st
 
 void SubscribeAnyTopic::callback(const ros_babel_fish::BabelFishMessage::ConstPtr& message)
 {
+  ROS_DEBUG_STREAM("SubscribeAnyTopic: "
+                   << "callback received");
   message_ = message;
 }
 

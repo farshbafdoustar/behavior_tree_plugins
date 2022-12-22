@@ -4,6 +4,8 @@
 #include "behaviortree_cpp/action_node.h"
 #include <behaviortree_cpp/bt_factory.h>
 
+#include "behavior_tree_plugin_ros/utilities/tree_node_manager.h"
+
 #include <ros/ros.h>
 
 namespace behavior_tree_plugin_ros
@@ -19,6 +21,8 @@ public:
 private:
   std::string service_name_;
   const std::string service_type_;
+  ros_babel_fish::BabelFish* fish_;
+  TreeNodeManager* tree_node_manager_;
 };
 
 }  // namespace behavior_tree_plugin_ros

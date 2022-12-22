@@ -9,6 +9,8 @@
 #include <ros_babel_fish/message_types.h>
 #include <ros_babel_fish/babel_fish_message.h>
 
+#include "behavior_tree_plugin_ros/utilities/tree_node_manager.h"
+
 namespace behavior_tree_plugin_ros
 {
 class SubscribeAnyTopic : public BT::SyncActionNode
@@ -28,6 +30,9 @@ private:
   ros::Subscriber subscriber_;
   ros_babel_fish::BabelFishMessage::ConstPtr message_;
   void callback(const ros_babel_fish::BabelFishMessage::ConstPtr& message);
+
+  ros_babel_fish::BabelFish* fish_;
+  TreeNodeManager* tree_node_manager_;
 };
 
 }  // namespace behavior_tree_plugin_ros

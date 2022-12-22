@@ -2,13 +2,14 @@
 
 #include "ros/callback_queue.h"
 
-#include "behavior_tree_plugin_ros/utilities/tree_node_manager.h"
-
 namespace behavior_tree_plugin_ros
 {
 SubscribeAnyTopic::SubscribeAnyTopic(const std::string& name, const BT::NodeConfig& config,
                                      ros::NodeHandle& node_handle, std::string topic_type)
-  : BT::SyncActionNode(name, config), node_handle_(node_handle), topic_type_(topic_type)
+  : BT::SyncActionNode(name, config)
+  , node_handle_(node_handle)
+  , topic_type_(topic_type)
+  , fish_(new ros_babel_fish::BabelFish())
 
 {
   BT::Expected<std::string> topic_name = getInput<std::string>("topic_name");
@@ -24,8 +25,8 @@ SubscribeAnyTopic::SubscribeAnyTopic(const std::string& name, const BT::NodeConf
 
 BT::PortsList SubscribeAnyTopic::getPorts(std::string topic_type)
 {
-  ros_babel_fish::BabelFish fish_;
-  auto message_description_ = fish_.descriptionProvider()->getMessageDescription(topic_type);
+  ros_babel_fish::BabelFish fish;
+  auto message_description_ = fish.descriptionProvider()->getMessageDescription(topic_type);
   if (message_description_ == nullptr)
   {
     ROS_ERROR_STREAM("No Topic definition for '" << topic_type << "' found!");
@@ -38,13 +39,23 @@ BT::PortsList SubscribeAnyTopic::getPorts(std::string topic_type)
 }
 BT::NodeStatus SubscribeAnyTopic::tick()
 {
-  ros::getGlobalCallbackQueue()->callAvailable(ros::WallDuration(0));
-  ros_babel_fish::BabelFish fish;
-  ros_babel_fish::TranslatedMessage::Ptr translated = fish.translateMessage(message_);
-  TreeNodeManager tree_node_manager_(*this);
-  ROS_DEBUG_STREAM("SubscribeAnyTopic: " << topic_name_);
-  tree_node_manager_.fillOutputPortsWithMessage(*translated->translated_message, "");
-  return BT::NodeStatus::SUCCESS;
+  if (!message_)
+  {
+    ros::getGlobalCallbackQueue()->callAvailable(ros::WallDuration(0));
+    return BT::NodeStatus::RUNNING;
+  }
+  else
+  {
+    ROS_DEBUG_STREAM("SubscribeAnyTopic: " << topic_name_);
+    ros_babel_fish::TranslatedMessage::Ptr translated = fish_->translateMessage(message_);
+    if (!tree_node_manager_)
+    {
+      tree_node_manager_ = new TreeNodeManager(*this);
+    }
+    tree_node_manager_->fillOutputPortsWithMessage(*translated->translated_message, "");
+    message_ = nullptr;
+    return BT::NodeStatus::SUCCESS;
+  }
 }
 
 void SubscribeAnyTopic::Register(BT::BehaviorTreeFactory& factory, const std::string& registration_ID,

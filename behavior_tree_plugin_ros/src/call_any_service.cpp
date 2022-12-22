@@ -1,11 +1,9 @@
 #include "behavior_tree_plugin_ros/call_any_service.h"
 
-#include "behavior_tree_plugin_ros/utilities/tree_node_manager.h"
-
 namespace behavior_tree_plugin_ros
 {
 CallAnyService::CallAnyService(const std::string& name, const BT::NodeConfig& config, std::string service_type)
-  : BT::SyncActionNode(name, config), service_type_(service_type)
+  : BT::SyncActionNode(name, config), service_type_(service_type), fish_(new ros_babel_fish::BabelFish())
 
 {
   BT::Expected<std::string> service_name = getInput<std::string>("service_name");
@@ -27,8 +25,8 @@ CallAnyService::CallAnyService(const std::string& name, const BT::NodeConfig& co
 
 BT::PortsList CallAnyService::getPorts(std::string service_type)
 {
-  ros_babel_fish::BabelFish fish_;
-  auto service_description_ = fish_.descriptionProvider()->getServiceDescription(service_type);
+  ros_babel_fish::BabelFish fish;
+  auto service_description_ = fish.descriptionProvider()->getServiceDescription(service_type);
   if (service_description_ == nullptr)
   {
     ROS_ERROR_STREAM("No service definition for '" << service_type << "' found!");
@@ -44,17 +42,18 @@ BT::PortsList CallAnyService::getPorts(std::string service_type)
 }
 BT::NodeStatus CallAnyService::tick()
 {
-  ros_babel_fish::BabelFish fish;
-  ros_babel_fish::Message::Ptr request = fish.createServiceRequest(service_type_);
-  TreeNodeManager tree_node_manager_(*this);
   ROS_DEBUG_STREAM("CallAnyService: " << service_name_);
-
-  tree_node_manager_.fillMessageFromInputPorts(*request, "request");
-
-  ros_babel_fish::TranslatedMessage::Ptr response;
-  if (fish.callService(service_name_, request, response))
+  ros_babel_fish::Message::Ptr request = fish_->createServiceRequest(service_type_);
+  if (!tree_node_manager_)
   {
-    tree_node_manager_.fillOutputPortsWithMessage(*response->translated_message, "response");
+    tree_node_manager_ = new TreeNodeManager(*this);
+  }
+
+  tree_node_manager_->fillMessageFromInputPorts(*request, "request");
+  ros_babel_fish::TranslatedMessage::Ptr response;
+  if (fish_->callService(service_name_, request, response))
+  {
+    tree_node_manager_->fillOutputPortsWithMessage(*response->translated_message, "response");
     return BT::NodeStatus::SUCCESS;
   }
   else

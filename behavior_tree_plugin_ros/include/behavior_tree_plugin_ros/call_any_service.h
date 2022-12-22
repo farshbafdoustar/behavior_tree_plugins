@@ -17,6 +17,7 @@ public:
   static void Register(BT::BehaviorTreeFactory& factory, const std::string& registration_ID, std::string service_type);
 
 private:
+  std::string service_name_;
   const std::string service_type_;
 };
 

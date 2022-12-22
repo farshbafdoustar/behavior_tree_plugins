@@ -482,7 +482,7 @@ void TreeNodeManager::fillOutputPortsWithMessage(ros_babel_fish::Message& respon
         break;
       case ros_babel_fish::MessageTypes::Time:
         tree_node_.setOutput<ros::Time>(prefix, response.value<ros::Time>());
-        ROS_DEBUG_STREAM(prefix << " : " << response.value < ros::Time >> ());
+        ROS_DEBUG_STREAM(prefix << " : " << response.value<ros::Time>());
         break;
       case ros_babel_fish::MessageTypes::Duration:
         tree_node_.setOutput<ros::Duration>(prefix, response.value<ros::Duration>());
@@ -490,7 +490,7 @@ void TreeNodeManager::fillOutputPortsWithMessage(ros_babel_fish::Message& respon
         break;
       case ros_babel_fish::MessageTypes::String:
         tree_node_.setOutput<std::string>(prefix, response.value<std::string>());
-        ROS_DEBUG_STREAM(prefix << " : " << response.value<ros::string>());
+        ROS_DEBUG_STREAM(prefix << " : " << response.value<std::string>());
         break;
     }
   }

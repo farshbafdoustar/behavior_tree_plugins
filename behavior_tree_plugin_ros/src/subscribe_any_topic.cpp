@@ -11,15 +11,15 @@ SubscribeAnyTopic::SubscribeAnyTopic(const std::string& name, const BT::NodeConf
   : BT::SyncActionNode(name, config), node_handle_(node_handle), topic_type_(topic_type)
 
 {
-  ROS_INFO_STREAM("SubscribeAnyTopic: " << this->name());
-
   BT::Expected<std::string> topic_name = getInput<std::string>("topic_name");
 
   if (!topic_name)
   {
     throw BT::RuntimeError("missing required input [topic_name]: ", topic_name.error());
   }
-  subscriber_ = node_handle_.subscribe(topic_name.value(), 1, &SubscribeAnyTopic::callback, this);
+  topic_name_ = topic_name.value();
+  ROS_INFO_STREAM("SubscribeAnyTopic: " << topic_name_);
+  subscriber_ = node_handle_.subscribe(topic_name_, 1, &SubscribeAnyTopic::callback, this);
 }
 
 BT::PortsList SubscribeAnyTopic::getPorts(std::string topic_type)
@@ -33,7 +33,7 @@ BT::PortsList SubscribeAnyTopic::getPorts(std::string topic_type)
   BT::PortsList ports;
   ports.insert(BT::InputPort<std::string>("topic_name"));
 
-  TreeNodeManager::makePortList(ports, BT::PortDirection::INPUT, message_description_->message_template, "");
+  TreeNodeManager::makePortList(ports, BT::PortDirection::OUTPUT, message_description_->message_template, "");
   return ports;
 }
 BT::NodeStatus SubscribeAnyTopic::tick()
@@ -42,6 +42,7 @@ BT::NodeStatus SubscribeAnyTopic::tick()
   ros_babel_fish::BabelFish fish;
   ros_babel_fish::TranslatedMessage::Ptr translated = fish.translateMessage(message_);
   TreeNodeManager tree_node_manager_(*this);
+  ROS_DEBUG_STREAM("SubscribeAnyTopic: " << topic_name_);
   tree_node_manager_.fillOutputPortsWithMessage(*translated->translated_message, "");
   return BT::NodeStatus::SUCCESS;
 }

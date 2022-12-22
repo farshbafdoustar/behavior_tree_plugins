@@ -8,14 +8,14 @@ CallAnyService::CallAnyService(const std::string& name, const BT::NodeConfig& co
   : BT::SyncActionNode(name, config), service_type_(service_type)
 
 {
-  ROS_INFO_STREAM("CallAnyService: " << this->name());
-
   BT::Expected<std::string> service_name = getInput<std::string>("service_name");
   // Check if optional is valid. If not, throw its error
   if (!service_name)
   {
     throw BT::RuntimeError("missing required input [service_name]: ", service_name.error());
   }
+  service_name_ = service_name.value();
+  ROS_INFO_STREAM("CallAnyService: " << service_name_);
 
   BT::Expected<double> connection_timeout_ms = getInput<double>("connection_timeout_ms");
   // Check if optional is valid. If not, throw its error
@@ -47,15 +47,12 @@ BT::NodeStatus CallAnyService::tick()
   ros_babel_fish::BabelFish fish;
   ros_babel_fish::Message::Ptr request = fish.createServiceRequest(service_type_);
   TreeNodeManager tree_node_manager_(*this);
-  tree_node_manager_.fillMessageFromInputPorts(*request, "request");
-  auto service_name = getInput<std::string>("service_name");
+  ROS_DEBUG_STREAM("CallAnyService: " << service_name_);
 
-  if (!service_name)
-  {
-    throw BT::RuntimeError("missing required input [service_name]: ", service_name.error());
-  }
+  tree_node_manager_.fillMessageFromInputPorts(*request, "request");
+
   ros_babel_fish::TranslatedMessage::Ptr response;
-  if (fish.callService(service_name.value(), request, response))
+  if (fish.callService(service_name_, request, response))
   {
     tree_node_manager_.fillOutputPortsWithMessage(*response->translated_message, "response");
     return BT::NodeStatus::SUCCESS;

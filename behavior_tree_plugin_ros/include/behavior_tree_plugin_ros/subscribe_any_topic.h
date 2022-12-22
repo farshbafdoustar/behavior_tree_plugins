@@ -22,6 +22,7 @@ public:
                        ros::NodeHandle& node_handle, std::string topic_type);
 
 private:
+  std::string topic_name_;
   ros::NodeHandle& node_handle_;
   const std::string topic_type_;
   ros::Subscriber subscriber_;

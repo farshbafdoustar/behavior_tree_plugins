@@ -76,7 +76,7 @@ void TreeNodeManager::makePortList(BT::PortsList& local_port_list, const BT::Por
       case ros_babel_fish::MessageTypes::Compound:
       case ros_babel_fish::MessageTypes::Array:  // Arrays of arrays are actually not supported in the ROS msg format
       {
-        ROS_ERROR_STREAM("Compound Type ports NOT implemented yet; Skipping" << prefix);
+        ROS_ERROR_STREAM("Array Type ports NOT implemented yet; Skipping" << prefix);
         // for (size_t i = 0; i < base.length; ++i)
         // {
         //   makePortList(local_port_list, port_direction, message_template->compound.types[i], prefix);
@@ -199,18 +199,22 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& request
         break;
       case ros_babel_fish::MessageTypes::String: {
         auto input = tree_node_.getInput<std::vector<std::string>>(prefix);
+        ROS_DEBUG_STREAM("request string 111:: " + prefix);
+
         if (input)
         {
           for (std::string str : input.value())
           {
+            ROS_DEBUG_STREAM("request string:: " + prefix << " : " << str);
             request.as<ros_babel_fish::ArrayMessage<std::string>>().push_back(str);
           }
         }
+
         break;
       }
       case ros_babel_fish::MessageTypes::Compound:
       case ros_babel_fish::MessageTypes::Array:  // Arrays of arrays are actually not supported in the ROS msg format
-        ROS_ERROR_STREAM("Filling Array of Arrays and Compound fields NOT implemented yet");
+        ROS_ERROR_STREAM("Filling Array of Arrays or Compound fields NOT implemented yet");
         // {
         //   std::cout << std::endl;
         //    auto &array = base.as<ros_babel_fish::ArrayMessage<ros_babel_fish::Message>>();
@@ -234,11 +238,12 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& request
       case ros_babel_fish::MessageTypes::None:
         break;
       case ros_babel_fish::MessageTypes::Bool: {
-        auto input = tree_node_.getInput<std::string>(prefix);
+        auto input = tree_node_.getInput<bool>(prefix);
         if (input)
         {
           request = input.value();
         }
+        ROS_DEBUG_STREAM(prefix << " : " << request.value<bool>());
         break;
       }
       case ros_babel_fish::MessageTypes::UInt8: {
@@ -247,6 +252,7 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& request
         {
           request = input.value();
         }
+        ROS_DEBUG_STREAM(prefix << " : " << request.value<uint8_t>());
         break;
       }
       case ros_babel_fish::MessageTypes::UInt16: {
@@ -255,6 +261,7 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& request
         {
           request = input.value();
         }
+        ROS_DEBUG_STREAM(prefix << " : " << request.value<uint16_t>());
         break;
       }
       case ros_babel_fish::MessageTypes::UInt32: {
@@ -263,6 +270,7 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& request
         {
           request = input.value();
         }
+        ROS_DEBUG_STREAM(prefix << " : " << request.value<uint32_t>());
         break;
       }
       case ros_babel_fish::MessageTypes::UInt64: {
@@ -271,6 +279,7 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& request
         {
           request = input.value();
         }
+        ROS_DEBUG_STREAM(prefix << " : " << request.value<uint64_t>());
         break;
       }
       case ros_babel_fish::MessageTypes::Int8: {
@@ -279,6 +288,7 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& request
         {
           request = input.value();
         }
+        ROS_DEBUG_STREAM(prefix << " : " << request.value<int8_t>());
         break;
       }
       case ros_babel_fish::MessageTypes::Int16: {
@@ -287,6 +297,7 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& request
         {
           request = input.value();
         }
+        ROS_DEBUG_STREAM(prefix << " : " << request.value<int16_t>());
         break;
       }
       case ros_babel_fish::MessageTypes::Int32: {
@@ -295,6 +306,7 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& request
         {
           request = input.value();
         }
+        ROS_DEBUG_STREAM(prefix << " : " << request.value<int32_t>());
         break;
       }
       case ros_babel_fish::MessageTypes::Int64: {
@@ -303,6 +315,7 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& request
         {
           request = input.value();
         }
+        ROS_DEBUG_STREAM(prefix << " : " << request.value<int64_t>());
         break;
       }
       case ros_babel_fish::MessageTypes::Float32: {
@@ -311,6 +324,7 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& request
         {
           request = input.value();
         }
+        ROS_DEBUG_STREAM(prefix << " : " << request.value<float>());
         break;
       }
       case ros_babel_fish::MessageTypes::Float64: {
@@ -319,6 +333,7 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& request
         {
           request = input.value();
         }
+        ROS_DEBUG_STREAM(prefix << " : " << request.value<double>());
         break;
       }
       case ros_babel_fish::MessageTypes::Time: {
@@ -345,6 +360,7 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& request
         {
           request = input.value();
         }
+        ROS_DEBUG_STREAM(prefix << " : " << request.value<std::string>());
         break;
       }
     }
@@ -415,14 +431,7 @@ void TreeNodeManager::fillOutputPortsWithMessage(ros_babel_fish::Message& respon
       case ros_babel_fish::MessageTypes::Compound:
       case ros_babel_fish::MessageTypes::Array:  // Arrays of arrays are actually not supported in the ROS msg format
       {
-        ROS_ERROR_STREAM("Filling Array of Arrays and Compound fields NOT implemented yet");
-        // std::cout << std::endl;
-        // auto& array = base.as<ros_babel_fish::ArrayMessage<ros_babel_fish::Message>>();
-        // for (size_t i = 0; i < array.length(); ++i)
-        // {
-        //   std::cout << prefix << "- ";
-        //   extractResponse(array[i], prefix);
-        // }
+        ROS_ERROR_STREAM("Filling Array of Arrays fields NOT implemented yet");
         break;
       }
     }
@@ -506,12 +515,11 @@ inline std::vector<std::string> convertFromString(StringView str)
   std::vector<std::string> tockens;
   if (!str.empty())
   {
-    std::string name;
-    std::istringstream names_stream(std::string(name), std::ios_base::in);
-
-    while (std::getline(names_stream, name, ';'))
+    std::istringstream str_stream(std::string(str), std::ios_base::in);
+    std::string tocken;
+    while (std::getline(str_stream, tocken, ';'))
     {
-      if (name != "")
+      if (tocken != "")
       {
         tockens.push_back(name);
       }

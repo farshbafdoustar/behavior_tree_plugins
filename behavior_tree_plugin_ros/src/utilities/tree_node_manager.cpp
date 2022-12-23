@@ -521,7 +521,7 @@ inline std::vector<std::string> convertFromString(StringView str)
     {
       if (tocken != "")
       {
-        tockens.push_back(name);
+        tockens.push_back(tocken);
       }
     }
   }

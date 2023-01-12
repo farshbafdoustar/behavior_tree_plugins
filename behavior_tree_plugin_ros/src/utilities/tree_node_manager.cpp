@@ -138,11 +138,11 @@ void TreeNodeManager::makePortList(BT::PortsList& local_port_list, const BT::Por
     }
   }
 }
-void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& request, const std::string& prefix)
+void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& message, const std::string& prefix)
 {
-  if (request.type() == ros_babel_fish::MessageTypes::Compound)
+  if (message.type() == ros_babel_fish::MessageTypes::Compound)
   {
-    auto& compound = request.as<ros_babel_fish::CompoundMessage>();
+    auto& compound = message.as<ros_babel_fish::CompoundMessage>();
     for (size_t i = 0; i < compound.keys().size(); ++i)
     {
       std::string name = compound.keys()[i];
@@ -151,9 +151,9 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& request
       fillMessageFromInputPorts(compound[name], prefix == "" ? name : prefix + "." + name);
     }
   }
-  else if (request.type() == ros_babel_fish::MessageTypes::Array)
+  else if (message.type() == ros_babel_fish::MessageTypes::Array)
   {
-    auto& base = request.as<ros_babel_fish::ArrayMessageBase>();
+    auto& base = message.as<ros_babel_fish::ArrayMessageBase>();
     switch (base.elementType())
     {
       case ros_babel_fish::MessageTypes::None:
@@ -199,14 +199,14 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& request
         break;
       case ros_babel_fish::MessageTypes::String: {
         auto input = tree_node_.getInput<std::vector<std::string>>(prefix);
-        ROS_DEBUG_STREAM("request string 111:: " + prefix);
+        ROS_DEBUG_STREAM("message string 111:: " + prefix);
 
         if (input)
         {
           for (std::string str : input.value())
           {
-            ROS_DEBUG_STREAM("request string:: " + prefix << " : " << str);
-            request.as<ros_babel_fish::ArrayMessage<std::string>>().push_back(str);
+            ROS_DEBUG_STREAM("message string:: " + prefix << " : " << str);
+            message.as<ros_babel_fish::ArrayMessage<std::string>>().push_back(str);
           }
         }
 
@@ -231,7 +231,7 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& request
   }
   else
   {
-    switch (request.type())
+    switch (message.type())
     {
       case ros_babel_fish::MessageTypes::Array:
       case ros_babel_fish::MessageTypes::Compound:
@@ -241,99 +241,99 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& request
         auto input = tree_node_.getInput<bool>(prefix);
         if (input)
         {
-          request = input.value();
+          message = input.value();
         }
-        ROS_DEBUG_STREAM(prefix << " : " << request.value<bool>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<bool>());
         break;
       }
       case ros_babel_fish::MessageTypes::UInt8: {
         auto input = tree_node_.getInput<uint8_t>(prefix);
         if (input)
         {
-          request = input.value();
+          message = input.value();
         }
-        ROS_DEBUG_STREAM(prefix << " : " << request.value<uint8_t>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<uint8_t>());
         break;
       }
       case ros_babel_fish::MessageTypes::UInt16: {
         auto input = tree_node_.getInput<uint16_t>(prefix);
         if (input)
         {
-          request = input.value();
+          message = input.value();
         }
-        ROS_DEBUG_STREAM(prefix << " : " << request.value<uint16_t>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<uint16_t>());
         break;
       }
       case ros_babel_fish::MessageTypes::UInt32: {
         auto input = tree_node_.getInput<uint32_t>(prefix);
         if (input)
         {
-          request = input.value();
+          message = input.value();
         }
-        ROS_DEBUG_STREAM(prefix << " : " << request.value<uint32_t>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<uint32_t>());
         break;
       }
       case ros_babel_fish::MessageTypes::UInt64: {
         auto input = tree_node_.getInput<uint64_t>(prefix);
         if (input)
         {
-          request = input.value();
+          message = input.value();
         }
-        ROS_DEBUG_STREAM(prefix << " : " << request.value<uint64_t>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<uint64_t>());
         break;
       }
       case ros_babel_fish::MessageTypes::Int8: {
         auto input = tree_node_.getInput<int8_t>(prefix);
         if (input)
         {
-          request = input.value();
+          message = input.value();
         }
-        ROS_DEBUG_STREAM(prefix << " : " << request.value<int8_t>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<int8_t>());
         break;
       }
       case ros_babel_fish::MessageTypes::Int16: {
         auto input = tree_node_.getInput<int16_t>(prefix);
         if (input)
         {
-          request = input.value();
+          message = input.value();
         }
-        ROS_DEBUG_STREAM(prefix << " : " << request.value<int16_t>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<int16_t>());
         break;
       }
       case ros_babel_fish::MessageTypes::Int32: {
         auto input = tree_node_.getInput<int32_t>(prefix);
         if (input)
         {
-          request = input.value();
+          message = input.value();
         }
-        ROS_DEBUG_STREAM(prefix << " : " << request.value<int32_t>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<int32_t>());
         break;
       }
       case ros_babel_fish::MessageTypes::Int64: {
         auto input = tree_node_.getInput<int64_t>(prefix);
         if (input)
         {
-          request = input.value();
+          message = input.value();
         }
-        ROS_DEBUG_STREAM(prefix << " : " << request.value<int64_t>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<int64_t>());
         break;
       }
       case ros_babel_fish::MessageTypes::Float32: {
         auto input = tree_node_.getInput<float>(prefix);
         if (input)
         {
-          request = input.value();
+          message = input.value();
         }
-        ROS_DEBUG_STREAM(prefix << " : " << request.value<float>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<float>());
         break;
       }
       case ros_babel_fish::MessageTypes::Float64: {
         auto input = tree_node_.getInput<double>(prefix);
         if (input)
         {
-          request = input.value();
+          message = input.value();
         }
-        ROS_DEBUG_STREAM(prefix << " : " << request.value<double>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<double>());
         break;
       }
       case ros_babel_fish::MessageTypes::Time: {
@@ -341,7 +341,7 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& request
         // auto input = tree_node_.getInput<ros::Time>(prefix);
         // if (input)
         // {
-        //   request = input.value();
+        //   message = input.value();
         // }
         break;
       }
@@ -350,7 +350,7 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& request
         // auto input = tree_node_.getInput<ros::Duration>(prefix);
         // if (input)
         // {
-        //   request = input.value();
+        //   message = input.value();
         // }
         break;
       }
@@ -358,19 +358,19 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& request
         auto input = tree_node_.getInput<std::string>(prefix);
         if (input)
         {
-          request = input.value();
+          message = input.value();
         }
-        ROS_DEBUG_STREAM(prefix << " : " << request.value<std::string>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<std::string>());
         break;
       }
     }
   }
 }
-void TreeNodeManager::fillOutputPortsWithMessage(ros_babel_fish::Message& response, const std::string& prefix)
+void TreeNodeManager::fillOutputPortsWithMessage(ros_babel_fish::Message& message, const std::string& prefix)
 {
-  if (response.type() == ros_babel_fish::MessageTypes::Compound)
+  if (message.type() == ros_babel_fish::MessageTypes::Compound)
   {
-    auto& compound = response.as<ros_babel_fish::CompoundMessage>();
+    auto& compound = message.as<ros_babel_fish::CompoundMessage>();
     for (size_t i = 0; i < compound.keys().size(); ++i)
     {
       std::string name = compound.keys()[i];
@@ -379,9 +379,9 @@ void TreeNodeManager::fillOutputPortsWithMessage(ros_babel_fish::Message& respon
       fillOutputPortsWithMessage(compound[name], prefix == "" ? name : prefix + "." + name);
     }
   }
-  else if (response.type() == ros_babel_fish::MessageTypes::Array)
+  else if (message.type() == ros_babel_fish::MessageTypes::Array)
   {
-    auto& base = response.as<ros_babel_fish::ArrayMessageBase>();
+    auto& base = message.as<ros_babel_fish::ArrayMessageBase>();
     switch (base.elementType())
     {
       case ros_babel_fish::MessageTypes::None:
@@ -438,7 +438,7 @@ void TreeNodeManager::fillOutputPortsWithMessage(ros_babel_fish::Message& respon
   }
   else
   {
-    switch (response.type())
+    switch (message.type())
     {
       case ros_babel_fish::MessageTypes::Array:
       case ros_babel_fish::MessageTypes::Compound:
@@ -446,60 +446,60 @@ void TreeNodeManager::fillOutputPortsWithMessage(ros_babel_fish::Message& respon
         ROS_DEBUG_STREAM(prefix << " is Array/Compound/None");
         break;
       case ros_babel_fish::MessageTypes::Bool:
-        tree_node_.setOutput<bool>(prefix, response.value<bool>());
-        ROS_DEBUG_STREAM(prefix << " : " << response.value<bool>());
+        tree_node_.setOutput<bool>(prefix, message.value<bool>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<bool>());
         break;
       case ros_babel_fish::MessageTypes::UInt8:
-        tree_node_.setOutput<uint8_t>(prefix, response.value<uint8_t>());
-        ROS_DEBUG_STREAM(prefix << " : " << response.value<uint8_t>());
+        tree_node_.setOutput<uint8_t>(prefix, message.value<uint8_t>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<uint8_t>());
         break;
       case ros_babel_fish::MessageTypes::UInt16:
-        tree_node_.setOutput<uint16_t>(prefix, response.value<uint16_t>());
-        ROS_DEBUG_STREAM(prefix << " : " << response.value<uint16_t>());
+        tree_node_.setOutput<uint16_t>(prefix, message.value<uint16_t>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<uint16_t>());
         break;
       case ros_babel_fish::MessageTypes::UInt32:
-        tree_node_.setOutput<uint32_t>(prefix, response.value<uint32_t>());
-        ROS_DEBUG_STREAM(prefix << " : " << response.value<uint32_t>());
+        tree_node_.setOutput<uint32_t>(prefix, message.value<uint32_t>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<uint32_t>());
         break;
       case ros_babel_fish::MessageTypes::UInt64:
-        tree_node_.setOutput<uint64_t>(prefix, response.value<uint64_t>());
-        ROS_DEBUG_STREAM(prefix << " : " << response.value<uint64_t>());
+        tree_node_.setOutput<uint64_t>(prefix, message.value<uint64_t>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<uint64_t>());
         break;
       case ros_babel_fish::MessageTypes::Int8:
-        tree_node_.setOutput<int8_t>(prefix, response.value<int8_t>());
-        ROS_DEBUG_STREAM(prefix << " : " << response.value<int8_t>());
+        tree_node_.setOutput<int8_t>(prefix, message.value<int8_t>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<int8_t>());
         break;
       case ros_babel_fish::MessageTypes::Int16:
-        tree_node_.setOutput<int16_t>(prefix, response.value<int16_t>());
-        ROS_DEBUG_STREAM(prefix << " : " << response.value<int16_t>());
+        tree_node_.setOutput<int16_t>(prefix, message.value<int16_t>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<int16_t>());
         break;
       case ros_babel_fish::MessageTypes::Int32:
-        tree_node_.setOutput<int32_t>(prefix, response.value<int32_t>());
-        ROS_DEBUG_STREAM(prefix << " : " << response.value<int32_t>());
+        tree_node_.setOutput<int32_t>(prefix, message.value<int32_t>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<int32_t>());
         break;
       case ros_babel_fish::MessageTypes::Int64:
-        tree_node_.setOutput<int64_t>(prefix, response.value<int64_t>());
-        ROS_DEBUG_STREAM(prefix << " : " << response.value<int64_t>());
+        tree_node_.setOutput<int64_t>(prefix, message.value<int64_t>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<int64_t>());
         break;
       case ros_babel_fish::MessageTypes::Float32:
-        tree_node_.setOutput<float>(prefix, response.value<float>());
-        ROS_DEBUG_STREAM(prefix << " : " << response.value<float>());
+        tree_node_.setOutput<float>(prefix, message.value<float>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<float>());
         break;
       case ros_babel_fish::MessageTypes::Float64:
-        tree_node_.setOutput<double>(prefix, response.value<double>());
-        ROS_DEBUG_STREAM(prefix << " : " << response.value<double>());
+        tree_node_.setOutput<double>(prefix, message.value<double>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<double>());
         break;
       case ros_babel_fish::MessageTypes::Time:
-        tree_node_.setOutput<ros::Time>(prefix, response.value<ros::Time>());
-        ROS_DEBUG_STREAM(prefix << " : " << response.value<ros::Time>());
+        tree_node_.setOutput<ros::Time>(prefix, message.value<ros::Time>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<ros::Time>());
         break;
       case ros_babel_fish::MessageTypes::Duration:
-        tree_node_.setOutput<ros::Duration>(prefix, response.value<ros::Duration>());
-        ROS_DEBUG_STREAM(prefix << " : " << response.value<ros::Duration>());
+        tree_node_.setOutput<ros::Duration>(prefix, message.value<ros::Duration>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<ros::Duration>());
         break;
       case ros_babel_fish::MessageTypes::String:
-        tree_node_.setOutput<std::string>(prefix, response.value<std::string>());
-        ROS_DEBUG_STREAM(prefix << " : " << response.value<std::string>());
+        tree_node_.setOutput<std::string>(prefix, message.value<std::string>());
+        ROS_DEBUG_STREAM(prefix << " : " << message.value<std::string>());
         break;
     }
   }

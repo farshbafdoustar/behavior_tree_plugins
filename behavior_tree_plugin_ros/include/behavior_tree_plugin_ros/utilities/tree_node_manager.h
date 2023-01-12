@@ -15,8 +15,8 @@ public:
   static void makePortList(BT::PortsList& local_port_list, const BT::PortDirection& port_direction,
                            const ros_babel_fish::MessageTemplate::ConstPtr message_template,
                            const std::string& prefix = "");
-  void fillMessageFromInputPorts(ros_babel_fish::Message& request, const std::string& prefix);
-  void fillOutputPortsWithMessage(ros_babel_fish::Message& response, const std::string& prefix);
+  void fillMessageFromInputPorts(ros_babel_fish::Message& message, const std::string& prefix);
+  void fillOutputPortsWithMessage(ros_babel_fish::Message& message, const std::string& prefix);
 
 private:
   BT::TreeNode& tree_node_;

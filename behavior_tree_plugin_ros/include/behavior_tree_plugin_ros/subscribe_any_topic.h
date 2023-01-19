@@ -33,6 +33,7 @@ private:
 
   ros_babel_fish::BabelFish* fish_;
   TreeNodeManager* tree_node_manager_;
+  bool is_statefull_ = false;
 };
 
 }  // namespace behavior_tree_plugin_ros

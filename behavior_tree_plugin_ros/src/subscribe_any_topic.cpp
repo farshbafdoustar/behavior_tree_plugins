@@ -20,6 +20,14 @@ SubscribeAnyTopic::SubscribeAnyTopic(const std::string& name, const BT::NodeConf
     throw BT::RuntimeError("missing required input [topic_name]: ", topic_name.error());
   }
   topic_name_ = topic_name.value();
+
+  BT::Expected<bool> is_statefull = getInput<bool>("is_statefull");
+
+  if (is_statefull)
+  {
+    is_statefull_ = is_statefull.value();
+  }
+
   ROS_INFO_STREAM("SubscribeAnyTopic: " << topic_name_);
   subscriber_ = node_handle_.subscribe(topic_name_, 1, &SubscribeAnyTopic::callback, this);
 }
@@ -34,29 +42,44 @@ BT::PortsList SubscribeAnyTopic::getPorts(std::string topic_type)
   }
   BT::PortsList ports;
   ports.insert(BT::InputPort<std::string>("topic_name"));
+  ports.insert(BT::InputPort<bool>("is_statefull"));
 
   TreeNodeManager::makePortList(ports, BT::PortDirection::OUTPUT, message_description_->message_template, "");
   return ports;
 }
 BT::NodeStatus SubscribeAnyTopic::tick()
 {
-  if (!message_)
+  if (is_statefull_)
   {
-    ros::getGlobalCallbackQueue()->callAvailable(ros::WallDuration(0));
-    return BT::NodeStatus::FAILURE;
-  }
-  else
-  {
-    ROS_DEBUG_STREAM("SubscribeAnyTopic: " << topic_name_);
     ros_babel_fish::TranslatedMessage::Ptr translated = fish_->translateMessage(message_);
     if (!tree_node_manager_)
     {
       tree_node_manager_ = new TreeNodeManager(*this);
     }
     tree_node_manager_->fillOutputPortsWithMessage(*translated->translated_message, "");
-    message_ = nullptr;
     return BT::NodeStatus::SUCCESS;
   }
+  else
+  {
+    if (!message_)
+    {
+      ros::getGlobalCallbackQueue()->callAvailable(ros::WallDuration(0));
+      return BT::NodeStatus::FAILURE;
+    }
+    else
+    {
+      ROS_DEBUG_STREAM("SubscribeAnyTopic: " << topic_name_);
+      ros_babel_fish::TranslatedMessage::Ptr translated = fish_->translateMessage(message_);
+      if (!tree_node_manager_)
+      {
+        tree_node_manager_ = new TreeNodeManager(*this);
+      }
+      tree_node_manager_->fillOutputPortsWithMessage(*translated->translated_message, "");
+      message_ = nullptr;
+      return BT::NodeStatus::SUCCESS;
+    }
+  }
+  return BT::NodeStatus::FAILURE;
 }
 
 void SubscribeAnyTopic::Register(BT::BehaviorTreeFactory& factory, const std::string& registration_ID,

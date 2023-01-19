@@ -51,13 +51,21 @@ BT::NodeStatus SubscribeAnyTopic::tick()
 {
   if (is_statefull_)
   {
-    ros_babel_fish::TranslatedMessage::Ptr translated = fish_->translateMessage(message_);
-    if (!tree_node_manager_)
+    if (message_)
     {
-      tree_node_manager_ = new TreeNodeManager(*this);
+      ros_babel_fish::TranslatedMessage::Ptr translated = fish_->translateMessage(message_);
+      if (!tree_node_manager_)
+      {
+        tree_node_manager_ = new TreeNodeManager(*this);
+      }
+      tree_node_manager_->fillOutputPortsWithMessage(*translated->translated_message, "");
+      return BT::NodeStatus::SUCCESS;
     }
-    tree_node_manager_->fillOutputPortsWithMessage(*translated->translated_message, "");
-    return BT::NodeStatus::SUCCESS;
+    else
+    {
+      ROS_DEBUG_STREAM("Is Latch Enabled on Published? Waiting for Message on Topic: " << topic_name_);
+      return BT::NodeStatus::RUNNING;
+    }
   }
   else
   {

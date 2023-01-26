@@ -175,7 +175,11 @@ BT::NodeStatus RosWrapper::tick()
           OnChildFailure(i);
           break;
         case BT::NodeStatus::RUNNING:
-          OnChildRunning(i);
+          // only chnage it for non indicators
+          if (!isRunAlwaysActive())
+          {
+            OnChildRunning(i);
+          }
           break;
 
         default:

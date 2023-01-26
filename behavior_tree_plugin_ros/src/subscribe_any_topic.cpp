@@ -63,8 +63,8 @@ BT::NodeStatus SubscribeAnyTopic::tick()
     }
     else
     {
-      ROS_DEBUG_STREAM("Is Latch Enabled on Published? Waiting for Message on Topic: " << topic_name_);
-      return BT::NodeStatus::RUNNING;
+      ROS_DEBUG_STREAM("Is Latch Enabled on Publisher? Waiting for Message on Topic: " << topic_name_);
+      return BT::NodeStatus::FAILURE;
     }
   }
   else

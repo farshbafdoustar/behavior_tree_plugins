@@ -19,8 +19,16 @@ PublishAnyTopic::PublishAnyTopic(const std::string& name, const BT::NodeConfig& 
   {
     throw BT::RuntimeError("missing required input [topic_name]: ", topic_name.error());
   }
+  BT::Expected<bool> is_latch = getInput<bool>("is_latch");
+  bool latched = false;
+  if (is_latch)
+  {
+    latched = is_latch.value();
+  }
+
   topic_name_ = topic_name.value();
-  publisher_ = fish_->advertise(node_handle_, topic_type_, topic_name_, 1, true);
+  publisher_ = fish_->advertise(node_handle_, topic_type_, topic_name_, 1, latched);
+  message_ = fish_->createMessage(topic_type_);
   ROS_INFO_STREAM("PublishAnyTopic: " << topic_name_);
 }
 
@@ -34,6 +42,7 @@ BT::PortsList PublishAnyTopic::getPorts(std::string topic_type)
   }
   BT::PortsList ports;
   ports.insert(BT::InputPort<std::string>("topic_name"));
+  ports.insert(BT::InputPort<bool>("is_latch"));
 
   TreeNodeManager::makePortList(ports, BT::PortDirection::INPUT, message_description_->message_template, "");
   return ports;
@@ -41,14 +50,16 @@ BT::PortsList PublishAnyTopic::getPorts(std::string topic_type)
 BT::NodeStatus PublishAnyTopic::tick()
 {
   ROS_DEBUG_STREAM("PublishAnyTopic: " << topic_name_);
-  ros_babel_fish::Message::Ptr message = fish_->createMessage(topic_type_);
+
   if (!tree_node_manager_)
   {
     tree_node_manager_ = new TreeNodeManager(*this);
   }
-  tree_node_manager_->fillMessageFromInputPorts(*message, "");
-  ros_babel_fish::BabelFishMessage::Ptr translated_message = fish_->translateMessage(message);
-  publisher_.publish(translated_message);
+  if (tree_node_manager_->fillMessageFromInputPorts(*message_, ""))
+  {
+    ros_babel_fish::BabelFishMessage::Ptr translated_message = fish_->translateMessage(message_);
+    publisher_.publish(translated_message);
+  }
   return BT::NodeStatus::SUCCESS;
 }
 

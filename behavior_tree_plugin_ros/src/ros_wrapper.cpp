@@ -43,9 +43,17 @@ int RosWrapper::getFailureCode()
   return 3;
 }
 
+void RosWrapper::UpdateAndPublishChildrenStatus(int i, int status)
+{
+  if (children_status_[i].data != status)
+  {
+    children_status_[i].data = status;
+    children_status_publisher_[i].publish(children_status_[i]);
+  }
+}
 void RosWrapper::OnChildSuccess(int i)
 {
-  children_status[i].data = getSuccessCode();
+  UpdateAndPublishChildrenStatus(i, getSuccessCode());
   if (children_command_.size() > 0)
   {
     children_command_[i] = -1;
@@ -53,7 +61,8 @@ void RosWrapper::OnChildSuccess(int i)
 }
 void RosWrapper::OnChildFailure(int i)
 {
-  children_status[i].data = getFailureCode();
+  UpdateAndPublishChildrenStatus(i, getFailureCode());
+
   if (children_command_.size() > 0)
   {
     children_command_[i] = -1;
@@ -61,19 +70,19 @@ void RosWrapper::OnChildFailure(int i)
 }
 void RosWrapper::OnChildRunning(int i)
 {
-  children_status[i].data = getRunningCode();
+  UpdateAndPublishChildrenStatus(i, getRunningCode());
 }
 void RosWrapper::OnChildStatusInitialize(int i)
 {
   BT::TreeNode* child_node = children_nodes_[i];
   std::string topic_name_status = child_node->name() + "/" + getStatusTopicName();
 
-  auto status_publisher = node_handle_.advertise<std_msgs::Int16>(topic_name_status, 1);
+  auto status_publisher = node_handle_.advertise<std_msgs::Int16>(topic_name_status, 1, true);
   children_status_publisher_.push_back(status_publisher);
 
   std_msgs::Int16 status;
   status.data = getIdleCode();
-  children_status.push_back(status);
+  children_status_.push_back(status);
 }
 void RosWrapper::OnChildCommandInitialize(int i)
 {
@@ -137,7 +146,7 @@ void RosWrapper::initialize()
 BT::NodeStatus RosWrapper::tick()
 {
   setStatus(BT::NodeStatus::RUNNING);
-  ros::getGlobalCallbackQueue()->callAvailable(ros::WallDuration(0));
+  // ros::getGlobalCallbackQueue()->callAvailable(ros::WallDuration(0));
   const size_t children_count = children_nodes_.size();
 
   for (unsigned int i = 0; i < children_count; i++)
@@ -173,20 +182,11 @@ BT::NodeStatus RosWrapper::tick()
           throw BT::LogicError("A child node must never return IDLE");
       }
     }
-    else if (children_command_.size() > 0 && children_command_[i] == 0 && children_status[i].data == getRunningCode())
+    else if (children_command_.size() > 0 && children_command_[i] == 0 && children_status_[i].data == getRunningCode())
     {
       haltChild(i);
-      children_status[i].data = getIdleCode();
+      UpdateAndPublishChildrenStatus(i, getIdleCode());
     }
-    children_status_publisher_[i].publish(children_status[i]);
-    // publish topics based on output ports
-    // for(auto port_name_info:child_node_.config().output_ports)
-    // {
-    //   auto port_name=port_name_info.first();
-    //   auto port_info=port_name_info.second();
-    //   child_node_.config().blackboard.get(port_name,value);
-    //   publisher.publish(value);
-    // }
   }
 
   return BT::NodeStatus::RUNNING;

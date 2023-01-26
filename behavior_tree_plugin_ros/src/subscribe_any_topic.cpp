@@ -71,7 +71,8 @@ BT::NodeStatus SubscribeAnyTopic::tick()
   {
     if (!message_)
     {
-      ros::getGlobalCallbackQueue()->callAvailable(ros::WallDuration(0));
+      // this is called one time in while in main node of Bt
+      //  ros::getGlobalCallbackQueue()->callAvailable(ros::WallDuration(0));
       return BT::NodeStatus::FAILURE;
     }
     else

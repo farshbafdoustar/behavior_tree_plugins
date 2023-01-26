@@ -138,8 +138,9 @@ void TreeNodeManager::makePortList(BT::PortsList& local_port_list, const BT::Por
     }
   }
 }
-void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& message, const std::string& prefix)
+bool TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& message, const std::string& prefix)
 {
+  bool is_message_updated = false;
   if (message.type() == ros_babel_fish::MessageTypes::Compound)
   {
     auto& compound = message.as<ros_babel_fish::CompoundMessage>();
@@ -148,7 +149,7 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& message
       std::string name = compound.keys()[i];
       // ROS_DEBUG_STREAM("Filling message from input port: " << (prefix == "" ? name : prefix + "." + name));
 
-      fillMessageFromInputPorts(compound[name], prefix == "" ? name : prefix + "." + name);
+      is_message_updated |= fillMessageFromInputPorts(compound[name], prefix == "" ? name : prefix + "." + name);
     }
   }
   else if (message.type() == ros_babel_fish::MessageTypes::Array)
@@ -200,7 +201,8 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& message
       case ros_babel_fish::MessageTypes::String: {
         auto input = tree_node_.getInput<std::vector<std::string>>(prefix);
         ROS_DEBUG_STREAM("message string 111:: " + prefix);
-
+        auto old_message = message.as<ros_babel_fish::ArrayMessage<std::string>>().clone();
+        message = ros_babel_fish::ArrayMessage<std::string>(ros_babel_fish::MessageTypes::String);
         if (input)
         {
           for (std::string str : input.value())
@@ -208,6 +210,23 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& message
             ROS_DEBUG_STREAM("message string:: " + prefix << " : " << str);
             message.as<ros_babel_fish::ArrayMessage<std::string>>().push_back(str);
           }
+        }
+        if (old_message->as<ros_babel_fish::ArrayMessage<std::string>>().length() ==
+            message.as<ros_babel_fish::ArrayMessage<std::string>>().length())
+        {
+          for (int i = 0; i < old_message->as<ros_babel_fish::ArrayMessage<std::string>>().length(); i++)
+          {
+            if (old_message->as<ros_babel_fish::ArrayMessage<std::string>>()[i] !=
+                message.as<ros_babel_fish::ArrayMessage<std::string>>()[i])
+            {
+              is_message_updated |= true;
+              break;
+            }
+          }
+        }
+        else
+        {
+          is_message_updated |= true;
         }
 
         break;
@@ -239,100 +258,167 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& message
         break;
       case ros_babel_fish::MessageTypes::Bool: {
         auto input = tree_node_.getInput<bool>(prefix);
+        auto old_message = message.clone();
         if (input)
         {
           message = input.value();
         }
+        else
+        {
+          message = false;
+        }
+        is_message_updated |= (old_message->value<bool>() != message.value<bool>());
         ROS_DEBUG_STREAM(prefix << " : " << message.value<bool>());
         break;
       }
       case ros_babel_fish::MessageTypes::UInt8: {
         auto input = tree_node_.getInput<uint8_t>(prefix);
+        auto old_message = message.clone();
         if (input)
         {
           message = input.value();
         }
+        else
+        {
+          message = 0;
+        }
+        is_message_updated |= (old_message->value<uint8_t>() != message.value<uint8_t>());
+
         ROS_DEBUG_STREAM(prefix << " : " << message.value<uint8_t>());
         break;
       }
       case ros_babel_fish::MessageTypes::UInt16: {
         auto input = tree_node_.getInput<uint16_t>(prefix);
+        auto old_message = message.clone();
         if (input)
         {
           message = input.value();
         }
+        else
+        {
+          message = 0;
+        }
+        is_message_updated |= (old_message->value<uint16_t>() != message.value<uint16_t>());
         ROS_DEBUG_STREAM(prefix << " : " << message.value<uint16_t>());
         break;
       }
       case ros_babel_fish::MessageTypes::UInt32: {
         auto input = tree_node_.getInput<uint32_t>(prefix);
+        auto old_message = message.clone();
         if (input)
         {
           message = input.value();
         }
+        else
+        {
+          message = 0;
+        }
+        is_message_updated |= (old_message->value<uint32_t>() != message.value<uint32_t>());
         ROS_DEBUG_STREAM(prefix << " : " << message.value<uint32_t>());
         break;
       }
       case ros_babel_fish::MessageTypes::UInt64: {
         auto input = tree_node_.getInput<uint64_t>(prefix);
+        auto old_message = message.clone();
         if (input)
         {
           message = input.value();
         }
+        else
+        {
+          message = 0;
+        }
+        is_message_updated |= (old_message->value<uint64_t>() != message.value<uint64_t>());
         ROS_DEBUG_STREAM(prefix << " : " << message.value<uint64_t>());
         break;
       }
       case ros_babel_fish::MessageTypes::Int8: {
         auto input = tree_node_.getInput<int8_t>(prefix);
+        auto old_message = message.clone();
         if (input)
         {
           message = input.value();
         }
+        else
+        {
+          message = 0;
+        }
+        is_message_updated |= (old_message->value<int8_t>() != message.value<int8_t>());
         ROS_DEBUG_STREAM(prefix << " : " << message.value<int8_t>());
         break;
       }
       case ros_babel_fish::MessageTypes::Int16: {
         auto input = tree_node_.getInput<int16_t>(prefix);
+        auto old_message = message.clone();
         if (input)
         {
           message = input.value();
         }
+        else
+        {
+          message = 0;
+        }
+        is_message_updated |= (old_message->value<int16_t>() != message.value<int16_t>());
         ROS_DEBUG_STREAM(prefix << " : " << message.value<int16_t>());
         break;
       }
       case ros_babel_fish::MessageTypes::Int32: {
         auto input = tree_node_.getInput<int32_t>(prefix);
+        auto old_message = message.clone();
         if (input)
         {
           message = input.value();
         }
+        else
+        {
+          message = 0;
+        }
+        is_message_updated |= (old_message->value<int32_t>() != message.value<int32_t>());
         ROS_DEBUG_STREAM(prefix << " : " << message.value<int32_t>());
         break;
       }
       case ros_babel_fish::MessageTypes::Int64: {
         auto input = tree_node_.getInput<int64_t>(prefix);
+        auto old_message = message.clone();
         if (input)
         {
           message = input.value();
         }
+        else
+        {
+          message = 0;
+        }
+        is_message_updated |= (old_message->value<int64_t>() != message.value<int64_t>());
         ROS_DEBUG_STREAM(prefix << " : " << message.value<int64_t>());
         break;
       }
       case ros_babel_fish::MessageTypes::Float32: {
         auto input = tree_node_.getInput<float>(prefix);
+        auto old_message = message.clone();
         if (input)
         {
           message = input.value();
         }
+        else
+        {
+          message = 0;
+        }
+        is_message_updated |= (old_message->value<float>() != message.value<float>());
         ROS_DEBUG_STREAM(prefix << " : " << message.value<float>());
         break;
       }
       case ros_babel_fish::MessageTypes::Float64: {
         auto input = tree_node_.getInput<double>(prefix);
+        auto old_message = message.clone();
         if (input)
         {
           message = input.value();
         }
+        else
+        {
+          message = 0;
+        }
+        is_message_updated |= (old_message->value<double>() != message.value<double>());
         ROS_DEBUG_STREAM(prefix << " : " << message.value<double>());
         break;
       }
@@ -356,15 +442,22 @@ void TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& message
       }
       case ros_babel_fish::MessageTypes::String: {
         auto input = tree_node_.getInput<std::string>(prefix);
+        auto old_message = message.clone();
         if (input)
         {
           message = input.value();
         }
+        else
+        {
+          message = "";
+        }
+        is_message_updated |= (old_message->value<std::string>() != message.value<std::string>());
         ROS_DEBUG_STREAM(prefix << " : " << message.value<std::string>());
         break;
       }
     }
   }
+  return is_message_updated;
 }
 void TreeNodeManager::fillOutputPortsWithMessage(ros_babel_fish::Message& message, const std::string& prefix)
 {

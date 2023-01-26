@@ -19,11 +19,11 @@ PublishAnyTopic::PublishAnyTopic(const std::string& name, const BT::NodeConfig& 
   {
     throw BT::RuntimeError("missing required input [topic_name]: ", topic_name.error());
   }
-  BT::Expected<bool> is_latch = getInput<bool>("is_latch");
+  BT::Expected<bool> is_latched = getInput<bool>("is_latched");
   bool latched = false;
-  if (is_latch)
+  if (is_latched)
   {
-    latched = is_latch.value();
+    latched = is_latched.value();
   }
 
   topic_name_ = topic_name.value();
@@ -42,7 +42,7 @@ BT::PortsList PublishAnyTopic::getPorts(std::string topic_type)
   }
   BT::PortsList ports;
   ports.insert(BT::InputPort<std::string>("topic_name"));
-  ports.insert(BT::InputPort<bool>("is_latch"));
+  ports.insert(BT::InputPort<bool>("is_latched"));
 
   TreeNodeManager::makePortList(ports, BT::PortDirection::INPUT, message_description_->message_template, "");
   return ports;

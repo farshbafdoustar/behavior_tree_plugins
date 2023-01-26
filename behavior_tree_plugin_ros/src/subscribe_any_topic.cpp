@@ -63,7 +63,13 @@ BT::NodeStatus SubscribeAnyTopic::tick()
     }
     else
     {
-      ROS_DEBUG_STREAM("Is Latch Enabled on Publisher? Waiting for Message on Topic: " << topic_name_);
+      if (!is_statefull_error_shown)
+      {
+        ROS_WARN_STREAM("Is Latch Enabled on Publisher? Waiting for Message on Topic: " << topic_name_
+                                                                                        << ". This message will be "
+                                                                                           "shown only once.");
+        is_statefull_error_shown = true;
+      }
       return BT::NodeStatus::FAILURE;
     }
   }

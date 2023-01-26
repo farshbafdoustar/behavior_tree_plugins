@@ -25,6 +25,12 @@ PublishAnyTopic::PublishAnyTopic(const std::string& name, const BT::NodeConfig& 
   {
     latched = is_latched.value();
   }
+  BT::Expected<bool> publish_on_change = getInput<bool>("publish_on_change");
+
+  if (publish_on_change)
+  {
+    publish_on_change_ = publish_on_change.value();
+  }
 
   topic_name_ = topic_name.value();
   publisher_ = fish_->advertise(node_handle_, topic_type_, topic_name_, 1, latched);
@@ -43,6 +49,7 @@ BT::PortsList PublishAnyTopic::getPorts(std::string topic_type)
   BT::PortsList ports;
   ports.insert(BT::InputPort<std::string>("topic_name"));
   ports.insert(BT::InputPort<bool>("is_latched"));
+  ports.insert(BT::InputPort<bool>("publish_on_change"));
 
   TreeNodeManager::makePortList(ports, BT::PortDirection::INPUT, message_description_->message_template, "");
   return ports;
@@ -55,7 +62,10 @@ BT::NodeStatus PublishAnyTopic::tick()
   {
     tree_node_manager_ = new TreeNodeManager(*this);
   }
-  if (tree_node_manager_->fillMessageFromInputPorts(*message_, ""))
+  bool changed = tree_node_manager_->fillMessageFromInputPorts(*message_, "");
+
+  // publish when publish_on_change_ is false or a chaneg is happend
+  if (changed || !publish_on_change_)
   {
     ros_babel_fish::BabelFishMessage::Ptr translated_message = fish_->translateMessage(message_);
     publisher_.publish(translated_message);

@@ -32,6 +32,7 @@ private:
   ros_babel_fish::BabelFish* fish_;
   TreeNodeManager* tree_node_manager_;
   ros_babel_fish::Message::Ptr message_;
+  bool publish_on_change_ = false;
 };
 
 }  // namespace behavior_tree_plugin_ros

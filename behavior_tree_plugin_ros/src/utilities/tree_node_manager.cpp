@@ -1,5 +1,7 @@
 #include "behavior_tree_plugin_ros/utilities/tree_node_manager.h"
 
+#include <charconv>
+
 namespace behavior_tree_plugin_ros
 {
 TreeNodeManager::TreeNodeManager(BT::TreeNode& tree_node) : tree_node_(tree_node)
@@ -620,5 +622,93 @@ inline std::vector<std::string> convertFromString(StringView str)
   }
 
   return tockens;
+}
+template <>
+uint8_t convertFromString<uint8_t>(StringView str)
+{
+  uint8_t result = 0;
+  auto [ptr, ec] = std::from_chars(str.data(), str.data() + str.size(), result);
+  if (ec != std::errc())
+  {
+    throw RuntimeError(StrCat("Can't convert string [", str, "] to uint8_t"));
+  }
+  return result;
+}
+template <>
+uint16_t convertFromString<uint16_t>(StringView str)
+{
+  uint16_t result = 0;
+  auto [ptr, ec] = std::from_chars(str.data(), str.data() + str.size(), result);
+  if (ec != std::errc())
+  {
+    throw RuntimeError(StrCat("Can't convert string [", str, "] to uint16_t"));
+  }
+  return result;
+}
+template <>
+uint32_t convertFromString<uint32_t>(StringView str)
+{
+  uint32_t result = 0;
+  auto [ptr, ec] = std::from_chars(str.data(), str.data() + str.size(), result);
+  if (ec != std::errc())
+  {
+    throw RuntimeError(StrCat("Can't convert string [", str, "] to uint32_t"));
+  }
+  return result;
+}
+template <>
+uint64_t convertFromString<uint64_t>(StringView str)
+{
+  uint64_t result = 0;
+  auto [ptr, ec] = std::from_chars(str.data(), str.data() + str.size(), result);
+  if (ec != std::errc())
+  {
+    throw RuntimeError(StrCat("Can't convert string [", str, "] to uint64_t"));
+  }
+  return result;
+}
+template <>
+int8_t convertFromString<int8_t>(StringView str)
+{
+  int8_t result = 0;
+  auto [ptr, ec] = std::from_chars(str.data(), str.data() + str.size(), result);
+  if (ec != std::errc())
+  {
+    throw RuntimeError(StrCat("Can't convert string [", str, "] to int8_t"));
+  }
+  return result;
+}
+template <>
+int16_t convertFromString<int16_t>(StringView str)
+{
+  int16_t result = 0;
+  auto [ptr, ec] = std::from_chars(str.data(), str.data() + str.size(), result);
+  if (ec != std::errc())
+  {
+    throw RuntimeError(StrCat("Can't convert string [", str, "] to int16_t"));
+  }
+  return result;
+}
+template <>
+int32_t convertFromString<int32_t>(StringView str)
+{
+  int32_t result = 0;
+  auto [ptr, ec] = std::from_chars(str.data(), str.data() + str.size(), result);
+  if (ec != std::errc())
+  {
+    throw RuntimeError(StrCat("Can't convert string [", str, "] to int32_t"));
+  }
+  return result;
+}
+template <>
+int64_t convertFromString<int64_t>(StringView str)
+{
+  int64_t result = 0;
+  auto [ptr, ec] = std::from_chars(str.data(), str.data() + str.size(), result);
+  if (ec != std::errc())
+  {
+    throw RuntimeError(StrCat("Can't convert string [", str, "] to int64_t"));
+  }
+  return result;
 }
 }  // end namespace BT

@@ -37,6 +37,8 @@ include_directories(
 add_library(${PROJECT_NAME}
   src/utilities/tree_node_manager.cpp
   src/call_any_service.cpp
+  src/compose_any_type_from_input_ports.cpp
+  src/decompose_any_type_to_output_ports.cpp
   src/publish_any_topic.cpp
   src/ros_wrapper.cpp
   src/subscribe_any_topic.cpp

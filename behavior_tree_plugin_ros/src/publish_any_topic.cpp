@@ -44,7 +44,7 @@ BT::PortsList PublishAnyTopic::getPorts(std::string topic_type)
   auto message_description_ = fish.descriptionProvider()->getMessageDescription(topic_type);
   if (message_description_ == nullptr)
   {
-    ROS_ERROR_STREAM("No Topic definition for '" << topic_type << "' found!");
+    ROS_ERROR_STREAM("No Type definition for '" << topic_type << "' found!");
   }
   BT::PortsList ports;
   ports.insert(BT::InputPort<std::string>("topic_name"));
@@ -67,8 +67,8 @@ BT::NodeStatus PublishAnyTopic::tick()
   // publish when publish_on_change_ is false or a chaneg is happend
   if (changed || !publish_on_change_)
   {
-    ros_babel_fish::BabelFishMessage::Ptr translated_message = fish_->translateMessage(message_);
-    publisher_.publish(translated_message);
+    ros_babel_fish::BabelFishMessage::Ptr translated_message_ptr = fish_->translateMessage(message_);
+    publisher_.publish(translated_message_ptr);
   }
   return BT::NodeStatus::SUCCESS;
 }

@@ -38,7 +38,7 @@ BT::PortsList SubscribeAnyTopic::getPorts(std::string topic_type)
   auto message_description_ = fish.descriptionProvider()->getMessageDescription(topic_type);
   if (message_description_ == nullptr)
   {
-    ROS_ERROR_STREAM("No Topic definition for '" << topic_type << "' found!");
+    ROS_ERROR_STREAM("No Type definition for '" << topic_type << "' found!");
   }
   BT::PortsList ports;
   ports.insert(BT::InputPort<std::string>("topic_name"));

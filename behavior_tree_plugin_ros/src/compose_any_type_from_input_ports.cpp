@@ -20,10 +20,16 @@ ComposeAnyTypeFromInputPorts::ComposeAnyTypeFromInputPorts(const std::string& na
   , tree_node_manager_(nullptr)
 
 {
+  const auto t1 = std::chrono::system_clock::now();
+
   ROS_DEBUG_STREAM("fish_ptr: " << fish_ptr);
   fish_ = fish_ptr != nullptr ? fish_ptr : new ros_babel_fish::BabelFish();
   instance_ptr_ = fish_->createMessage(instance_type_);
   ROS_INFO_STREAM("ComposeAnyTypeFromInputPorts: " << instance_type_);
+  
+  const auto dT = (std::chrono::system_clock::now() -t1);
+  const auto dt_ms = std::chrono::duration_cast<std::chrono::milliseconds>(dT).count();
+  std::cout << registrationName() << ": " << this->name() << " -> " << dt_ms << std::endl; 
 }
 
 BT::PortsList ComposeAnyTypeFromInputPorts::getPorts(std::string instance_type, ros_babel_fish::BabelFish& fish)

@@ -14,6 +14,8 @@ PublishAnyTopic::PublishAnyTopic(const std::string& name, const BT::NodeConfig& 
   : BT::SyncActionNode(name, config), node_handle_(node_handle), topic_type_(topic_type), tree_node_manager_(nullptr)
 
 {
+  const auto t1 = std::chrono::system_clock::now();
+
   ROS_DEBUG_STREAM("fish_ptr: " << fish_ptr);
   fish_ = fish_ptr != nullptr ? fish_ptr : new ros_babel_fish::BabelFish();
   BT::Expected<std::string> topic_name = getInput<std::string>("topic_name");
@@ -39,6 +41,10 @@ PublishAnyTopic::PublishAnyTopic(const std::string& name, const BT::NodeConfig& 
   publisher_ = fish_->advertise(node_handle_, topic_type_, topic_name_, 1, latched);
   message_ = fish_->createMessage(topic_type_);
   ROS_INFO_STREAM("PublishAnyTopic: " << topic_name_);
+
+  const auto dT = (std::chrono::system_clock::now() - t1);
+  const auto dt_ms = std::chrono::duration_cast<std::chrono::milliseconds>(dT).count();
+  std::cout << registrationName() << ": " << this->name() << " -> " << dt_ms << std::endl;
 }
 
 BT::PortsList PublishAnyTopic::getPorts(std::string topic_type, ros_babel_fish::BabelFish& fish)

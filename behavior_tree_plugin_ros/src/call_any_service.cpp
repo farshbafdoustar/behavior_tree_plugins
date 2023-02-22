@@ -12,6 +12,8 @@ CallAnyService::CallAnyService(const std::string& name, const BT::NodeConfig& co
   : BT::SyncActionNode(name, config), service_type_(service_type), tree_node_manager_(nullptr)
 
 {
+  const auto t1 = std::chrono::system_clock::now();
+
   ROS_DEBUG_STREAM("fish_ptr: " << fish_ptr);
   fish_ = fish_ptr != nullptr ? fish_ptr : new ros_babel_fish::BabelFish();
   BT::Expected<std::string> service_name = getInput<std::string>("service_name");
@@ -29,6 +31,10 @@ CallAnyService::CallAnyService(const std::string& name, const BT::NodeConfig& co
   {
     throw BT::RuntimeError("missing required input [connection_timeout_ms]: ", connection_timeout_ms.error());
   }
+
+  const auto dT = (std::chrono::system_clock::now() - t1);
+  const auto dt_ms = std::chrono::duration_cast<std::chrono::milliseconds>(dT).count();
+  std::cout << registrationName() << ": " << this->name() << " -> " << dt_ms << std::endl;
 }
 BT::PortsList CallAnyService::getPorts(std::string service_type, ros_babel_fish::BabelFish& fish)
 {

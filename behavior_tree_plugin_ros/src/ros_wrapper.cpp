@@ -8,7 +8,13 @@ RosWrapper::RosWrapper(const std::string& name, const BT::NodeConfig& config, ro
   : BT::ControlNode(name, config), node_handle_(node_handle)
 
 {
+  const auto t1 = std::chrono::system_clock::now();
+
   ROS_INFO_STREAM("RosWrapper for : " << this->name());
+
+  const auto dT = (std::chrono::system_clock::now() - t1);
+  const auto dt_ms = std::chrono::duration_cast<std::chrono::milliseconds>(dT).count();
+  std::cout << registrationName() << ": " << this->name() << " -> " << dt_ms << std::endl;
 }
 BT::PortsList RosWrapper::providedPorts()
 {

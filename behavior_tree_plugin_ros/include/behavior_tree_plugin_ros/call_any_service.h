@@ -14,9 +14,15 @@ class CallAnyService : public BT::SyncActionNode
 {
 public:
   CallAnyService(const std::string& name, const BT::NodeConfig& config, std::string service_type);
+  CallAnyService(const std::string& name, const BT::NodeConfig& config, std::string service_type,
+                 ros_babel_fish::BabelFish* fish_ptr);
   static BT::PortsList getPorts(std::string service_type);
+  static BT::PortsList getPorts(std::string service_type, ros_babel_fish::BabelFish& fish);
   BT::NodeStatus tick() override;
+  
   static void Register(BT::BehaviorTreeFactory& factory, const std::string& registration_ID, std::string service_type);
+  static void Register(BT::BehaviorTreeFactory& factory, const std::string& registration_ID, std::string service_type,
+                       ros_babel_fish::BabelFish* fish);
 
 private:
   std::string service_name_;

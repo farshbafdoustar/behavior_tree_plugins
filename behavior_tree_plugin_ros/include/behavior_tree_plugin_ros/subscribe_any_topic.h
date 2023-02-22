@@ -18,10 +18,17 @@ class SubscribeAnyTopic : public BT::SyncActionNode
 public:
   SubscribeAnyTopic(const std::string& name, const BT::NodeConfig& config, ros::NodeHandle& node_handle,
                     std::string topic_type);
+  SubscribeAnyTopic(const std::string& name, const BT::NodeConfig& config, ros::NodeHandle& node_handle,
+                    std::string topic_type, ros_babel_fish::BabelFish* fish_ptr);
+
   static BT::PortsList getPorts(std::string topic_type);
+  static BT::PortsList getPorts(std::string topic_type, ros_babel_fish::BabelFish& fish);
+
   BT::NodeStatus tick() override;
   static void Register(BT::BehaviorTreeFactory& factory, const std::string& registration_ID,
                        ros::NodeHandle& node_handle, std::string topic_type);
+  static void Register(BT::BehaviorTreeFactory& factory, const std::string& registration_ID,
+                       ros::NodeHandle& node_handle, std::string topic_type, ros_babel_fish::BabelFish* fish);
 
 private:
   std::string topic_name_;
@@ -35,7 +42,7 @@ private:
   TreeNodeManager* tree_node_manager_;
   bool is_statefull_ = false;
 
-  bool is_statefull_error_shown=false;
+  bool is_statefull_error_shown = false;
 };
 
 }  // namespace behavior_tree_plugin_ros

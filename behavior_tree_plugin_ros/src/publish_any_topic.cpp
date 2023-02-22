@@ -6,13 +6,16 @@ namespace behavior_tree_plugin_ros
 {
 PublishAnyTopic::PublishAnyTopic(const std::string& name, const BT::NodeConfig& config, ros::NodeHandle& node_handle,
                                  std::string topic_type)
-  : BT::SyncActionNode(name, config)
-  , node_handle_(node_handle)
-  , topic_type_(topic_type)
-  , fish_(new ros_babel_fish::BabelFish())
-  , tree_node_manager_(nullptr)
+  : PublishAnyTopic(name, config, node_handle, topic_type, nullptr)
+{
+}
+PublishAnyTopic::PublishAnyTopic(const std::string& name, const BT::NodeConfig& config, ros::NodeHandle& node_handle,
+                                 std::string topic_type, ros_babel_fish::BabelFish* fish_ptr)
+  : BT::SyncActionNode(name, config), node_handle_(node_handle), topic_type_(topic_type), tree_node_manager_(nullptr)
 
 {
+  ROS_DEBUG_STREAM("fish_ptr: " << fish_ptr);
+  fish_ = fish_ptr != nullptr ? fish_ptr : new ros_babel_fish::BabelFish();
   BT::Expected<std::string> topic_name = getInput<std::string>("topic_name");
 
   if (!topic_name)
@@ -38,9 +41,8 @@ PublishAnyTopic::PublishAnyTopic(const std::string& name, const BT::NodeConfig& 
   ROS_INFO_STREAM("PublishAnyTopic: " << topic_name_);
 }
 
-BT::PortsList PublishAnyTopic::getPorts(std::string topic_type)
+BT::PortsList PublishAnyTopic::getPorts(std::string topic_type, ros_babel_fish::BabelFish& fish)
 {
-  ros_babel_fish::BabelFish fish;
   auto message_description_ = fish.descriptionProvider()->getMessageDescription(topic_type);
   if (message_description_ == nullptr)
   {
@@ -53,6 +55,11 @@ BT::PortsList PublishAnyTopic::getPorts(std::string topic_type)
 
   TreeNodeManager::makePortList(ports, BT::PortDirection::INPUT, message_description_->message_template, "");
   return ports;
+}
+BT::PortsList PublishAnyTopic::getPorts(std::string topic_type)
+{
+  ros_babel_fish::BabelFish fish;
+  return getPorts(topic_type, fish);
 }
 BT::NodeStatus PublishAnyTopic::tick()
 {
@@ -74,17 +81,22 @@ BT::NodeStatus PublishAnyTopic::tick()
 }
 
 void PublishAnyTopic::Register(BT::BehaviorTreeFactory& factory, const std::string& registration_ID,
-                               ros::NodeHandle& node_handle, std::string topic_type)
+                               ros::NodeHandle& node_handle, std::string topic_type, ros_babel_fish::BabelFish* fish)
 {
-  BT::NodeBuilder builder = [&, topic_type, &node_handle](const std::string& name, const BT::NodeConfig config) {
-    return std::make_unique<behavior_tree_plugin_ros::PublishAnyTopic>(name, config, node_handle, topic_type);
+  BT::NodeBuilder builder = [&, topic_type, fish](const std::string& name, const BT::NodeConfig config) {
+    return std::make_unique<behavior_tree_plugin_ros::PublishAnyTopic>(name, config, node_handle, topic_type, fish);
   };
 
   BT::TreeNodeManifest manifest;
   manifest.type = BT::getType<PublishAnyTopic>();
-  manifest.ports = PublishAnyTopic::getPorts(topic_type);
+  manifest.ports = fish ? PublishAnyTopic::getPorts(topic_type, *fish) : PublishAnyTopic::getPorts(topic_type);
   manifest.registration_ID = registration_ID;
   factory.registerBuilder(manifest, builder);
+}
+void PublishAnyTopic::Register(BT::BehaviorTreeFactory& factory, const std::string& registration_ID,
+                               ros::NodeHandle& node_handle, std::string topic_type)
+{
+  Register(factory, registration_ID, node_handle, topic_type, nullptr);
 }
 
 }  // namespace behavior_tree_plugin_ros

@@ -18,10 +18,16 @@ class DecomposeAnyTypeToOutputPorts : public BT::SyncActionNode
 public:
   DecomposeAnyTypeToOutputPorts(const std::string& name, const BT::NodeConfig& config, ros::NodeHandle& node_handle,
                                 std::string instance_type);
+  DecomposeAnyTypeToOutputPorts(const std::string& name, const BT::NodeConfig& config, ros::NodeHandle& node_handle,
+                                std::string instance_type,ros_babel_fish::BabelFish* fish_ptr);
   static BT::PortsList getPorts(std::string instance_type);
+  static BT::PortsList getPorts(std::string instance_type, ros_babel_fish::BabelFish& fish);
   BT::NodeStatus tick() override;
+  
   static void Register(BT::BehaviorTreeFactory& factory, const std::string& registration_ID,
                        ros::NodeHandle& node_handle, std::string instance_type);
+  static void Register(BT::BehaviorTreeFactory& factory, const std::string& registration_ID,
+                       ros::NodeHandle& node_handle, std::string instance_type, ros_babel_fish::BabelFish* fish);
 
 private:
   ros::NodeHandle& node_handle_;

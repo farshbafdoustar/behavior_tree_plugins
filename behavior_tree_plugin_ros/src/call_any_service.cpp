@@ -3,12 +3,17 @@
 namespace behavior_tree_plugin_ros
 {
 CallAnyService::CallAnyService(const std::string& name, const BT::NodeConfig& config, std::string service_type)
-  : BT::SyncActionNode(name, config)
-  , service_type_(service_type)
-  , fish_(new ros_babel_fish::BabelFish())
-  , tree_node_manager_(nullptr)
+  : CallAnyService(name, config, service_type, nullptr)
 
 {
+}
+CallAnyService::CallAnyService(const std::string& name, const BT::NodeConfig& config, std::string service_type,
+                               ros_babel_fish::BabelFish* fish_ptr)
+  : BT::SyncActionNode(name, config), service_type_(service_type), tree_node_manager_(nullptr)
+
+{
+  ROS_DEBUG_STREAM("fish_ptr: " << fish_ptr);
+  fish_ = fish_ptr != nullptr ? fish_ptr : new ros_babel_fish::BabelFish();
   BT::Expected<std::string> service_name = getInput<std::string>("service_name");
   // Check if optional is valid. If not, throw its error
   if (!service_name)
@@ -25,10 +30,8 @@ CallAnyService::CallAnyService(const std::string& name, const BT::NodeConfig& co
     throw BT::RuntimeError("missing required input [connection_timeout_ms]: ", connection_timeout_ms.error());
   }
 }
-
-BT::PortsList CallAnyService::getPorts(std::string service_type)
+BT::PortsList CallAnyService::getPorts(std::string service_type, ros_babel_fish::BabelFish& fish)
 {
-  ros_babel_fish::BabelFish fish;
   auto service_description_ = fish.descriptionProvider()->getServiceDescription(service_type);
   if (service_description_ == nullptr)
   {
@@ -42,6 +45,11 @@ BT::PortsList CallAnyService::getPorts(std::string service_type)
   TreeNodeManager::makePortList(ports, BT::PortDirection::OUTPUT, service_description_->response->message_template,
                                 "response");
   return ports;
+}
+BT::PortsList CallAnyService::getPorts(std::string service_type)
+{
+  ros_babel_fish::BabelFish fish;
+  return getPorts(service_type, fish);
 }
 BT::NodeStatus CallAnyService::tick()
 {
@@ -65,17 +73,23 @@ BT::NodeStatus CallAnyService::tick()
   }
 }
 void CallAnyService::Register(BT::BehaviorTreeFactory& factory, const std::string& registration_ID,
-                              std::string service_type)
+                              std::string service_type, ros_babel_fish::BabelFish* fish)
 {
-  BT::NodeBuilder builder = [&, service_type](const std::string& name, const BT::NodeConfig config) {
-    return std::make_unique<behavior_tree_plugin_ros::CallAnyService>(name, config, service_type);
+  BT::NodeBuilder builder = [&, service_type, fish](const std::string& name, const BT::NodeConfig config) {
+    return std::make_unique<behavior_tree_plugin_ros::CallAnyService>(name, config, service_type, fish);
   };
 
   BT::TreeNodeManifest manifest;
   manifest.type = BT::getType<CallAnyService>();
-  manifest.ports = CallAnyService::getPorts(service_type);
+
+  manifest.ports = fish ? CallAnyService::getPorts(service_type, *fish) : CallAnyService::getPorts(service_type);
   manifest.registration_ID = registration_ID;
   factory.registerBuilder(manifest, builder);
+}
+void CallAnyService::Register(BT::BehaviorTreeFactory& factory, const std::string& registration_ID,
+                              std::string service_type)
+{
+  Register(factory, registration_ID, service_type, nullptr);
 }
 
 }  // namespace behavior_tree_plugin_ros

@@ -18,10 +18,16 @@ class PublishAnyTopic : public BT::SyncActionNode
 public:
   PublishAnyTopic(const std::string& name, const BT::NodeConfig& config, ros::NodeHandle& node_handle,
                   std::string topic_type);
+  PublishAnyTopic(const std::string& name, const BT::NodeConfig& config, ros::NodeHandle& node_handle,
+                  std::string topic_type,ros_babel_fish::BabelFish* fish_ptr);
+
   static BT::PortsList getPorts(std::string topic_type);
+  static BT::PortsList getPorts(std::string topic_type, ros_babel_fish::BabelFish& fish);
   BT::NodeStatus tick() override;
   static void Register(BT::BehaviorTreeFactory& factory, const std::string& registration_ID,
                        ros::NodeHandle& node_handle, std::string topic_type);
+  static void Register(BT::BehaviorTreeFactory& factory, const std::string& registration_ID,
+                       ros::NodeHandle& node_handle, std::string topic_type,ros_babel_fish::BabelFish* fish);
 
 private:
   std::string topic_name_;

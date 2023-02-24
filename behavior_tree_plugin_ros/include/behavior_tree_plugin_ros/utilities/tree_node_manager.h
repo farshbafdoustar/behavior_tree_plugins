@@ -16,7 +16,7 @@ public:
                            const ros_babel_fish::MessageTemplate::ConstPtr message_template,
                            const std::string& prefix = "");
   bool fillMessageFromInputPorts(ros_babel_fish::Message& message, const std::string& prefix);
-  void fillOutputPortsWithMessage(ros_babel_fish::Message& message, const std::string& prefix);
+  void fillOutputPortsWithMessage(const ros_babel_fish::Message& message, const std::string& prefix);
 
 private:
   BT::TreeNode& tree_node_;

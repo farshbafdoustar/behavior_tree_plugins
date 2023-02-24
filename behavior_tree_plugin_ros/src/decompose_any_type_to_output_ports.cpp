@@ -18,7 +18,6 @@ DecomposeAnyTypeToOutputPorts::DecomposeAnyTypeToOutputPorts(const std::string& 
   , tree_node_manager_(nullptr)
 
 {
-  ROS_DEBUG_STREAM("fish_ptr: " << fish_ptr);
   fish_ = fish_ptr != nullptr ? fish_ptr : new ros_babel_fish::BabelFish();
   ROS_INFO_STREAM("DecomposeAnyTypeToOutputPorts: " << instance_type_);
 }
@@ -50,16 +49,13 @@ BT::NodeStatus DecomposeAnyTypeToOutputPorts::tick()
   {
     throw BT::RuntimeError("missing required input [instance_]: ", instance.error());
   }
-
-  ros_babel_fish::BabelFishMessage temp = instance.value();
-  ros_babel_fish::BabelFishMessage::Ptr instance_ptr(&temp);
-
-  ros_babel_fish::TranslatedMessage::Ptr translated = fish_->translateMessage(instance_ptr);
+  ros_babel_fish::Message::Ptr message_ptr = fish_->translateMessage(instance.value());
   if (!tree_node_manager_)
   {
     tree_node_manager_ = new TreeNodeManager(*this);
   }
-  tree_node_manager_->fillOutputPortsWithMessage(*translated->translated_message, "");
+  tree_node_manager_->fillOutputPortsWithMessage(*message_ptr, "");
+
   return BT::NodeStatus::SUCCESS;
 }
 

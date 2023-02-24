@@ -18,7 +18,7 @@ void TreeNodeManager::makePortList(BT::PortsList& local_port_list, const BT::Por
     for (size_t i = 0; i < message_template->compound.names.size(); ++i)
     {
       std::string name = message_template->compound.names[i];
-      ROS_DEBUG_STREAM("Port created: " << (prefix == "" ? name : prefix + "." + name));
+      ROS_DEBUG_STREAM("Ports will be created as children for: " << (prefix == "" ? name : prefix + "." + name));
 
       makePortList(local_port_list, port_direction, message_template->compound.types[i],
                    prefix == "" ? name : prefix + "." + name);
@@ -461,7 +461,7 @@ bool TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& message
   }
   return is_message_updated;
 }
-void TreeNodeManager::fillOutputPortsWithMessage(ros_babel_fish::Message& message, const std::string& prefix)
+void TreeNodeManager::fillOutputPortsWithMessage(const ros_babel_fish::Message& message, const std::string& prefix)
 {
   if (message.type() == ros_babel_fish::MessageTypes::Compound)
   {

@@ -481,48 +481,157 @@ void TreeNodeManager::fillOutputPortsWithMessage(const ros_babel_fish::Message& 
     {
       case ros_babel_fish::MessageTypes::None:
         break;
-      case ros_babel_fish::MessageTypes::Bool:
-        ROS_ERROR_STREAM("Filling Bool Array field NOT implemented yet");
-        break;
-      case ros_babel_fish::MessageTypes::UInt8:
-        ROS_ERROR_STREAM("Filling Bool Array field NOT implemented yet");
-        break;
-      case ros_babel_fish::MessageTypes::UInt16:
-        ROS_ERROR_STREAM("Filling Bool Array field NOT implemented yet");
-        break;
-      case ros_babel_fish::MessageTypes::UInt32:
-        ROS_ERROR_STREAM("Filling Bool Array field NOT implemented yet");
-        break;
-      case ros_babel_fish::MessageTypes::UInt64:
-        ROS_ERROR_STREAM("Filling Bool Array field NOT implemented yet");
-        break;
-      case ros_babel_fish::MessageTypes::Int8:
-        ROS_ERROR_STREAM("Filling Bool Array field NOT implemented yet");
-        break;
-      case ros_babel_fish::MessageTypes::Int16:
-        ROS_ERROR_STREAM("Filling Bool Array field NOT implemented yet");
-        break;
-      case ros_babel_fish::MessageTypes::Int32:
-        ROS_ERROR_STREAM("Filling Bool Array field NOT implemented yet");
-        break;
-      case ros_babel_fish::MessageTypes::Int64:
-        ROS_ERROR_STREAM("Filling Bool Array field NOT implemented yet");
-        break;
-      case ros_babel_fish::MessageTypes::Float32:
-        ROS_ERROR_STREAM("Filling Bool Array field NOT implemented yet");
-        break;
-      case ros_babel_fish::MessageTypes::Float64:
-        ROS_ERROR_STREAM("Filling Bool Array field NOT implemented yet");
-        break;
+      case ros_babel_fish::MessageTypes::Bool: {
+        auto& massage = base.as<ros_babel_fish::ArrayMessage<bool>>();
+        std::vector<bool> temp_value;
+        for (auto i = 0; i < massage.length(); i++)
+        {
+          temp_value.push_back(massage[i]);
+          ROS_DEBUG_STREAM(prefix << "[" << i << "]"
+                                  << " : " << massage[i]);
+        }
+        tree_node_.setOutput<std::vector<bool>>(prefix, temp_value);
+      }
+      break;
+      case ros_babel_fish::MessageTypes::UInt8: {
+        auto& massage = base.as<ros_babel_fish::ArrayMessage<uint8_t>>();
+        std::vector<uint8_t> temp_value;
+        for (auto i = 0; i < massage.length(); i++)
+        {
+          temp_value.push_back(massage[i]);
+          ROS_DEBUG_STREAM(prefix << "[" << i << "]"
+                                  << " : " << massage[i]);
+        }
+        tree_node_.setOutput<std::vector<uint8_t>>(prefix, temp_value);
+      }
+      break;
+      case ros_babel_fish::MessageTypes::UInt16: {
+        auto& massage = base.as<ros_babel_fish::ArrayMessage<uint16_t>>();
+        std::vector<uint16_t> temp_value;
+        for (auto i = 0; i < massage.length(); i++)
+        {
+          temp_value.push_back(massage[i]);
+          ROS_DEBUG_STREAM(prefix << "[" << i << "]"
+                                  << " : " << massage[i]);
+        }
+        tree_node_.setOutput<std::vector<uint16_t>>(prefix, temp_value);
+      }
+      break;
+      case ros_babel_fish::MessageTypes::UInt32: {
+        auto& massage = base.as<ros_babel_fish::ArrayMessage<uint32_t>>();
+        std::vector<uint32_t> temp_value;
+        for (auto i = 0; i < massage.length(); i++)
+        {
+          temp_value.push_back(massage[i]);
+          ROS_DEBUG_STREAM(prefix << "[" << i << "]"
+                                  << " : " << massage[i]);
+        }
+        tree_node_.setOutput<std::vector<uint32_t>>(prefix, temp_value);
+      }
+      break;
+      case ros_babel_fish::MessageTypes::UInt64: {
+        auto& massage = base.as<ros_babel_fish::ArrayMessage<uint64_t>>();
+        std::vector<uint64_t> temp_value;
+        for (auto i = 0; i < massage.length(); i++)
+        {
+          temp_value.push_back(massage[i]);
+          ROS_DEBUG_STREAM(prefix << "[" << i << "]"
+                                  << " : " << massage[i]);
+        }
+        tree_node_.setOutput<std::vector<uint64_t>>(prefix, temp_value);
+      }
+      break;
+
+      case ros_babel_fish::MessageTypes::Int8: {
+        auto& massage = base.as<ros_babel_fish::ArrayMessage<int8_t>>();
+        std::vector<int8_t> temp_value;
+        for (auto i = 0; i < massage.length(); i++)
+        {
+          temp_value.push_back(massage[i]);
+          ROS_DEBUG_STREAM(prefix << "[" << i << "]"
+                                  << " : " << massage[i]);
+        }
+        tree_node_.setOutput<std::vector<int8_t>>(prefix, temp_value);
+      }
+      break;
+      case ros_babel_fish::MessageTypes::Int16: {
+        auto& massage = base.as<ros_babel_fish::ArrayMessage<int16_t>>();
+        std::vector<int16_t> temp_value;
+        for (auto i = 0; i < massage.length(); i++)
+        {
+          temp_value.push_back(massage[i]);
+          ROS_DEBUG_STREAM(prefix << "[" << i << "]"
+                                  << " : " << massage[i]);
+        }
+        tree_node_.setOutput<std::vector<int16_t>>(prefix, temp_value);
+      }
+      break;
+      case ros_babel_fish::MessageTypes::Int32: {
+        auto& massage = base.as<ros_babel_fish::ArrayMessage<int32_t>>();
+        std::vector<int32_t> temp_value;
+        for (auto i = 0; i < massage.length(); i++)
+        {
+          temp_value.push_back(massage[i]);
+          ROS_DEBUG_STREAM(prefix << "[" << i << "]"
+                                  << " : " << massage[i]);
+        }
+        tree_node_.setOutput<std::vector<int32_t>>(prefix, temp_value);
+      }
+      break;
+      case ros_babel_fish::MessageTypes::Int64: {
+        auto& massage = base.as<ros_babel_fish::ArrayMessage<int64_t>>();
+        std::vector<int64_t> temp_value;
+        for (auto i = 0; i < massage.length(); i++)
+        {
+          temp_value.push_back(massage[i]);
+          ROS_DEBUG_STREAM(prefix << "[" << i << "]"
+                                  << " : " << massage[i]);
+        }
+        tree_node_.setOutput<std::vector<int64_t>>(prefix, temp_value);
+      }
+      break;
+      case ros_babel_fish::MessageTypes::Float32: {
+        auto& massage = base.as<ros_babel_fish::ArrayMessage<float>>();
+        std::vector<float> temp_value;
+        for (auto i = 0; i < massage.length(); i++)
+        {
+          temp_value.push_back(massage[i]);
+          ROS_DEBUG_STREAM(prefix << "[" << i << "]"
+                                  << " : " << massage[i]);
+        }
+        tree_node_.setOutput<std::vector<float>>(prefix, temp_value);
+      }
+      break;
+      case ros_babel_fish::MessageTypes::Float64: {
+        auto& massage = base.as<ros_babel_fish::ArrayMessage<double>>();
+        std::vector<double> temp_value;
+        for (auto i = 0; i < massage.length(); i++)
+        {
+          temp_value.push_back(massage[i]);
+          ROS_DEBUG_STREAM(prefix << "[" << i << "]"
+                                  << " : " << massage[i]);
+        }
+        tree_node_.setOutput<std::vector<double>>(prefix, temp_value);
+      }
+      break;
       case ros_babel_fish::MessageTypes::Time:
-        ROS_ERROR_STREAM("Filling Bool Array field NOT implemented yet");
+        ROS_ERROR_STREAM("Filling Time Array field NOT implemented yet");
         break;
       case ros_babel_fish::MessageTypes::Duration:
-        ROS_ERROR_STREAM("Filling Bool Array field NOT implemented yet");
+        ROS_ERROR_STREAM("Filling Duration Array field NOT implemented yet");
         break;
-      case ros_babel_fish::MessageTypes::String:
-        ROS_ERROR_STREAM("Filling Bool Array field NOT implemented yet");
-        break;
+      case ros_babel_fish::MessageTypes::String: {
+        auto& massage = base.as<ros_babel_fish::ArrayMessage<std::string>>();
+        std::vector<std::string> temp_value;
+        for (auto i = 0; i < massage.length(); i++)
+        {
+          temp_value.push_back(massage[i]);
+          ROS_DEBUG_STREAM(prefix << "[" << i << "]"
+                                  << " : " << massage[i]);
+        }
+        tree_node_.setOutput<std::vector<std::string>>(prefix, temp_value);
+      }
+      break;
       case ros_babel_fish::MessageTypes::Compound:
       case ros_babel_fish::MessageTypes::Array:  // Arrays of arrays are actually not supported in the ROS msg format
       {

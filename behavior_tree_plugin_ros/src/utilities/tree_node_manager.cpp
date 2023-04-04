@@ -18,6 +18,10 @@ void TreeNodeManager::makePortList(BT::PortsList& local_port_list, const BT::Por
     for (size_t i = 0; i < message_template->compound.names.size(); ++i)
     {
       std::string name = message_template->compound.names[i];
+      if (name == "name" || name == "ID")
+      {
+        name = name + "_";
+      }
       ROS_DEBUG_STREAM("Ports will be created as children for: " << (prefix == "" ? name : prefix + "." + name));
 
       makePortList(local_port_list, port_direction, message_template->compound.types[i],

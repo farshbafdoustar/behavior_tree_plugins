@@ -66,15 +66,15 @@ void TreeNodeManager::makePortList(BT::PortsList& local_port_list, const BT::Por
         local_port_list.insert(BT::CreatePort<std::vector<float>>(port_direction, prefix));
         break;
       case ros_babel_fish::MessageTypes::Float64:
-        ROS_ERROR_STREAM("Float64");
+        ROS_WARN_STREAM("Float64");
         local_port_list.insert(BT::CreatePort<std::vector<double>>(port_direction, prefix));
         break;
       case ros_babel_fish::MessageTypes::Time:
-        ROS_ERROR_STREAM("Port of type Time ARRAY NOT implemented yet;Skipping..." << prefix);
+        ROS_WARN_STREAM("Port of type Time ARRAY NOT implemented yet;Skipping..." << prefix);
         // local_port_list.insert(BT::CreatePort<std::vector<ros::Time>>(port_direction,prefix));
         break;
       case ros_babel_fish::MessageTypes::Duration:
-        ROS_ERROR_STREAM("Port of type Duration ARRAY NOT implemented yet;Skipping..." << prefix);
+        ROS_WARN_STREAM("Port of type Duration ARRAY NOT implemented yet;Skipping..." << prefix);
         // local_port_list.insert(BT::CreatePort<std::vector<ros::Duration>>(port_direction,prefix));
         break;
       case ros_babel_fish::MessageTypes::String:
@@ -83,7 +83,7 @@ void TreeNodeManager::makePortList(BT::PortsList& local_port_list, const BT::Por
       case ros_babel_fish::MessageTypes::Compound:
       case ros_babel_fish::MessageTypes::Array:  // Arrays of arrays are actually not supported in the ROS msg format
       {
-        ROS_ERROR_STREAM("Array Type ports NOT implemented yet; Skipping" << prefix);
+        ROS_WARN_STREAM("Array Type ports NOT implemented yet; Skipping" << prefix);
         // for (size_t i = 0; i < base.length; ++i)
         // {
         //   makePortList(local_port_list, port_direction, message_template->compound.types[i], prefix);
@@ -240,15 +240,15 @@ void TreeNodeManager::makePortForInstanceIndexAt(BT::PortsList& local_port_list,
         local_port_list.insert(BT::CreatePort<std::vector<float>>(port_direction, prefix));
         break;
       case ros_babel_fish::MessageTypes::Float64:
-        ROS_ERROR_STREAM("Float64");
+        ROS_WARN_STREAM("Float64");
         local_port_list.insert(BT::CreatePort<std::vector<double>>(port_direction, prefix));
         break;
       case ros_babel_fish::MessageTypes::Time:
-        ROS_ERROR_STREAM("Port of type Time ARRAY NOT implemented yet;Skipping..." << prefix);
+        ROS_WARN_STREAM("Port of type Time ARRAY NOT implemented yet;Skipping..." << prefix);
         // local_port_list.insert(BT::CreatePort<std::vector<ros::Time>>(port_direction,prefix));
         break;
       case ros_babel_fish::MessageTypes::Duration:
-        ROS_ERROR_STREAM("Port of type Duration ARRAY NOT implemented yet;Skipping..." << prefix);
+        ROS_WARN_STREAM("Port of type Duration ARRAY NOT implemented yet;Skipping..." << prefix);
         // local_port_list.insert(BT::CreatePort<std::vector<ros::Duration>>(port_direction,prefix));
         break;
       case ros_babel_fish::MessageTypes::String:
@@ -257,7 +257,7 @@ void TreeNodeManager::makePortForInstanceIndexAt(BT::PortsList& local_port_list,
       case ros_babel_fish::MessageTypes::Compound:
       case ros_babel_fish::MessageTypes::Array:  // Arrays of arrays are actually not supported in the ROS msg format
       {
-        ROS_ERROR_STREAM("Array Type ports NOT implemented yet; Skipping" << prefix);
+        ROS_WARN_STREAM("Array Type ports NOT implemented yet; Skipping" << prefix);
         // for (size_t i = 0; i < base.length; ++i)
         // {
         //   makePortList(local_port_list, port_direction, message_template->compound.types[i], prefix);
@@ -289,43 +289,43 @@ bool TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& message
       case ros_babel_fish::MessageTypes::None:
         break;
       case ros_babel_fish::MessageTypes::Bool:
-        ROS_ERROR_STREAM("Filling Bool Array field NOT implemented yet");
+        ROS_WARN_STREAM("Filling Bool Array field NOT implemented yet");
         break;
       case ros_babel_fish::MessageTypes::UInt8:
-        ROS_ERROR_STREAM("Filling UInt8 Array field NOT implemented yet");
+        ROS_WARN_STREAM("Filling UInt8 Array field NOT implemented yet");
         break;
       case ros_babel_fish::MessageTypes::UInt16:
-        ROS_ERROR_STREAM("Filling UInt16 Array field NOT implemented yet");
+        ROS_WARN_STREAM("Filling UInt16 Array field NOT implemented yet");
         break;
       case ros_babel_fish::MessageTypes::UInt32:
-        ROS_ERROR_STREAM("Filling UInt32 Array field NOT implemented yet");
+        ROS_WARN_STREAM("Filling UInt32 Array field NOT implemented yet");
         break;
       case ros_babel_fish::MessageTypes::UInt64:
-        ROS_ERROR_STREAM("Filling UInt64 Array field NOT implemented yet");
+        ROS_WARN_STREAM("Filling UInt64 Array field NOT implemented yet");
         break;
       case ros_babel_fish::MessageTypes::Int8:
-        ROS_ERROR_STREAM("Filling Int8 Array field NOT implemented yet");
+        ROS_WARN_STREAM("Filling Int8 Array field NOT implemented yet");
         break;
       case ros_babel_fish::MessageTypes::Int16:
-        ROS_ERROR_STREAM("Filling Int16 Array field NOT implemented yet");
+        ROS_WARN_STREAM("Filling Int16 Array field NOT implemented yet");
         break;
       case ros_babel_fish::MessageTypes::Int32:
-        ROS_ERROR_STREAM("Filling Int32 Array field NOT implemented yet");
+        ROS_WARN_STREAM("Filling Int32 Array field NOT implemented yet");
         break;
       case ros_babel_fish::MessageTypes::Int64:
-        ROS_ERROR_STREAM("Filling Int64 Array field NOT implemented yet");
+        ROS_WARN_STREAM("Filling Int64 Array field NOT implemented yet");
         break;
       case ros_babel_fish::MessageTypes::Float32:
-        ROS_ERROR_STREAM("Filling Float32 Array field NOT implemented yet");
+        ROS_WARN_STREAM("Filling Float32 Array field NOT implemented yet");
         break;
       case ros_babel_fish::MessageTypes::Float64:
-        ROS_ERROR_STREAM("Filling Float64 Array field NOT implemented yet");
+        ROS_WARN_STREAM("Filling Float64 Array field NOT implemented yet");
         break;
       case ros_babel_fish::MessageTypes::Time:
-        ROS_ERROR_STREAM("Filling Time Array field NOT implemented yet");
+        ROS_WARN_STREAM("Filling Time Array field NOT implemented yet");
         break;
       case ros_babel_fish::MessageTypes::Duration:
-        ROS_ERROR_STREAM("Filling Duration Array field NOT implemented yet");
+        ROS_WARN_STREAM("Filling Duration Array field NOT implemented yet");
         break;
       case ros_babel_fish::MessageTypes::String: {
         auto input = tree_node_.getInput<std::vector<std::string>>(prefix);
@@ -362,7 +362,7 @@ bool TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& message
       }
       case ros_babel_fish::MessageTypes::Compound:
       case ros_babel_fish::MessageTypes::Array:  // Arrays of arrays are actually not supported in the ROS msg format
-        ROS_ERROR_STREAM("Filling Array of Arrays or Compound fields NOT implemented yet");
+        ROS_WARN_STREAM("Filling Array of Arrays or Compound fields NOT implemented yet");
         // {
         //   std::cout << std::endl;
         //    auto &array = base.as<ros_babel_fish::ArrayMessage<ros_babel_fish::Message>>();
@@ -552,7 +552,7 @@ bool TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& message
         break;
       }
       case ros_babel_fish::MessageTypes::Time: {
-        ROS_ERROR_STREAM("Filling Time fields NOT implemented yet");
+        ROS_WARN_STREAM("Filling Time fields NOT implemented yet");
         // auto input = tree_node_.getInput<ros::Time>(prefix);
         // if (input)
         // {
@@ -561,7 +561,7 @@ bool TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& message
         break;
       }
       case ros_babel_fish::MessageTypes::Duration: {
-        ROS_ERROR_STREAM("Filling Duration fields NOT implemented yet");
+        ROS_WARN_STREAM("Filling Duration fields NOT implemented yet");
         // auto input = tree_node_.getInput<ros::Duration>(prefix);
         // if (input)
         // {
@@ -590,10 +590,9 @@ bool TreeNodeManager::fillMessageFromInputPorts(ros_babel_fish::Message& message
 }
 void TreeNodeManager::fillOutputPortsWithMessage(const ros_babel_fish::Message& message, const std::string& prefix)
 {
-  ROS_ERROR_STREAM("1"<<prefix);
+
   if (message.type() == ros_babel_fish::MessageTypes::Compound)
   {
-    ROS_ERROR_STREAM("2"<<prefix);
     auto& compound = message.as<ros_babel_fish::CompoundMessage>();
     for (size_t i = 0; i < compound.keys().size(); ++i)
     {
@@ -605,7 +604,6 @@ void TreeNodeManager::fillOutputPortsWithMessage(const ros_babel_fish::Message& 
   }
   else if (message.type() == ros_babel_fish::MessageTypes::Array)
   {
-    ROS_ERROR_STREAM("3"<<prefix);
     auto& base = message.as<ros_babel_fish::ArrayMessageBase>();
     switch (base.elementType())
     {
@@ -746,10 +744,10 @@ void TreeNodeManager::fillOutputPortsWithMessage(const ros_babel_fish::Message& 
       }
       break;
       case ros_babel_fish::MessageTypes::Time:
-        ROS_ERROR_STREAM("Filling Time Array field NOT implemented yet");
+        ROS_WARN_STREAM("Filling Time Array field NOT implemented yet");
         break;
       case ros_babel_fish::MessageTypes::Duration:
-        ROS_ERROR_STREAM("Filling Duration Array field NOT implemented yet");
+        ROS_WARN_STREAM("Filling Duration Array field NOT implemented yet");
         break;
       case ros_babel_fish::MessageTypes::String: {
         auto& massage = base.as<ros_babel_fish::ArrayMessage<std::string>>();
@@ -766,14 +764,13 @@ void TreeNodeManager::fillOutputPortsWithMessage(const ros_babel_fish::Message& 
       case ros_babel_fish::MessageTypes::Compound:
       case ros_babel_fish::MessageTypes::Array:  // Arrays of arrays are actually not supported in the ROS msg format
       {
-        ROS_ERROR_STREAM("Filling Array of Arrays fields NOT implemented yet");
+        ROS_WARN_STREAM("Filling Array of Arrays fields NOT implemented yet");
         break;
       }
     }
   }
   else
   {
-    ROS_ERROR_STREAM("4"<<prefix);
     switch (message.type())
     {
       case ros_babel_fish::MessageTypes::Array:
@@ -839,16 +836,14 @@ void TreeNodeManager::fillOutputPortsWithMessage(const ros_babel_fish::Message& 
         break;
     }
   }
-  ROS_ERROR_STREAM("5"<<prefix);
+
 }
 
 void TreeNodeManager::fillResultWithIndexAt(ros_babel_fish::Message& message,const std::string& instance_port_name, const std::string& prefix,
                                             uint64_t index)
 {
-  ROS_ERROR_STREAM("fillResultWithIndexAt_1"<<prefix);
   if (message.type() == ros_babel_fish::MessageTypes::Compound)
   {
-    ROS_ERROR_STREAM("fillResultWithIndexAt_2"<<prefix);
     auto& compound = message.as<ros_babel_fish::CompoundMessage>();
     for (size_t i = 0; i < compound.keys().size(); ++i)
     {
@@ -860,7 +855,6 @@ void TreeNodeManager::fillResultWithIndexAt(ros_babel_fish::Message& message,con
   }
   else if (message.type() == ros_babel_fish::MessageTypes::Array)
   {
-    ROS_ERROR_STREAM("fillResultWithIndexAt_3"<<prefix);
     auto& base = message.as<ros_babel_fish::ArrayMessageBase>();
     switch (base.elementType())
     {
@@ -996,7 +990,7 @@ void TreeNodeManager::fillResultWithIndexAt(ros_babel_fish::Message& message,con
         }
         
         auto temp_value=instance_.value();
-        ROS_ERROR_STREAM("fillResultWithIndexAt_4"<<prefix);
+        ROS_WARN_STREAM("fillResultWithIndexAt_4"<<prefix);
         for (auto i = 0; i < temp_value.size(); i++)
         {
           temp_value.push_back(temp_value[i]);
@@ -1007,10 +1001,10 @@ void TreeNodeManager::fillResultWithIndexAt(ros_babel_fish::Message& message,con
       }
       break;
       case ros_babel_fish::MessageTypes::Time:
-        ROS_ERROR_STREAM("Filling Time Array field NOT implemented yet");
+        ROS_WARN_STREAM("Filling Time Array field NOT implemented yet");
         break;
       case ros_babel_fish::MessageTypes::Duration:
-        ROS_ERROR_STREAM("Filling Duration Array field NOT implemented yet");
+        ROS_WARN_STREAM("Filling Duration Array field NOT implemented yet");
         break;
       case ros_babel_fish::MessageTypes::String: {
         auto& massage = base.as<ros_babel_fish::ArrayMessage<std::string>>();
@@ -1027,16 +1021,15 @@ void TreeNodeManager::fillResultWithIndexAt(ros_babel_fish::Message& message,con
       case ros_babel_fish::MessageTypes::Compound:
       case ros_babel_fish::MessageTypes::Array:  // Arrays of arrays are actually not supported in the ROS msg format
       {
-        ROS_ERROR_STREAM("Filling Array of Arrays fields NOT implemented yet");
+        ROS_WARN_STREAM("Filling Array of Arrays fields NOT implemented yet");
         break;
       }
     }
   }
   else
   {
-    ROS_ERROR_STREAM("Instance is a primitive type. So no array Indexing!");
+    ROS_WARN_STREAM("Instance is a primitive type. So no array Indexing!");
   }
-  ROS_ERROR_STREAM("fillResultWithIndexAt_5"<<prefix);
 }
 
 }  // namespace behavior_tree_plugin_ros

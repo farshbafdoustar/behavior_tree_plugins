@@ -18,7 +18,7 @@ void TreeNodeManager::makePortList(BT::PortsList& local_port_list, const BT::Por
     for (size_t i = 0; i < message_template->compound.names.size(); ++i)
     {
       std::string name = message_template->compound.names[i];
-      if (name == "name" || name == "ID")
+      if (prefix=="" && (name == "name" || name == "ID"))
       {
         name = name + "_";
       }

@@ -15,8 +15,15 @@ public:
   static void makePortList(BT::PortsList& local_port_list, const BT::PortDirection& port_direction,
                            const ros_babel_fish::MessageTemplate::ConstPtr message_template,
                            const std::string& prefix = "");
+  static void makePortForResultIndexAt(BT::PortsList& local_port_list, const BT::PortDirection& port_direction,
+                                       const ros_babel_fish::MessageTemplate::ConstPtr message_template,
+                                       const std::string& prefix);
+  static void makePortForInstanceIndexAt(BT::PortsList& local_port_list, const BT::PortDirection& port_direction,
+                                               const ros_babel_fish::MessageTemplate::ConstPtr message_template,
+                                               const std::string& prefix);
   bool fillMessageFromInputPorts(ros_babel_fish::Message& message, const std::string& prefix);
   void fillOutputPortsWithMessage(const ros_babel_fish::Message& message, const std::string& prefix);
+  void fillResultWithIndexAt(ros_babel_fish::Message& message, const std::string& instance_port_name, const std::string& prefix, uint64_t index);
 
 private:
   BT::TreeNode& tree_node_;

@@ -15,6 +15,7 @@ IndexArray::IndexArray(const std::string& name, const BT::NodeConfig& config, ro
 {
   fish_ = fish_ptr != nullptr ? fish_ptr : new ros_babel_fish::BabelFish();
   instance_ptr_ = fish_->createMessage(instance_type_);
+
   ROS_INFO_STREAM("IndexArray: " << instance_type_);
 }
 
@@ -52,7 +53,13 @@ BT::NodeStatus IndexArray::tick()
   {
     throw BT::RuntimeError("missing required input [index_]: ", index.error());
   }
-  tree_node_manager_->fillResultWithIndexAt(*instance_ptr_, "instance_", "result", index.value());
+  auto message_description_ = fish_->descriptionProvider()->getMessageDescription(instance_type_);
+  if (message_description_ == nullptr)
+  {
+    ROS_ERROR_STREAM("No Type definition for '" << instance_type_ << "' found!");
+  }
+  tree_node_manager_->fillResultWithIndexAt(message_description_->message_template, "instance_", "result",
+                                            index.value());
 
   return BT::NodeStatus::SUCCESS;
 }

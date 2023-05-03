@@ -1,6 +1,7 @@
 #include "behavior_tree_plugin_ros/utilities/tree_node_manager.h"
 
 #include <charconv>
+#include <boost/algorithm/string.hpp>
 
 namespace behavior_tree_plugin_ros
 {
@@ -597,7 +598,7 @@ void TreeNodeManager::fillOutputPortsWithMessage(const ros_babel_fish::Message& 
     for (size_t i = 0; i < compound.keys().size(); ++i)
     {
       std::string name = compound.keys()[i];
-      std::string output_port_name=name;
+      std::string output_port_name = name;
       if (prefix == "" && (name == "name" || name == "ID"))
       {
         output_port_name = name + "_";
@@ -620,8 +621,8 @@ void TreeNodeManager::fillOutputPortsWithMessage(const ros_babel_fish::Message& 
         for (auto i = 0; i < base.length(); i++)
         {
           temp_value.push_back(massage[i]);
-           ROS_DEBUG_STREAM(prefix << "[" << i << "]"
-                                   << " : " << massage[i]);
+          ROS_DEBUG_STREAM(prefix << "[" << i << "]"
+                                  << " : " << massage[i]);
         }
         tree_node_.setOutput<std::vector<bool>>(prefix, temp_value);
       }
@@ -1035,7 +1036,8 @@ void TreeNodeManager::fillResultWithIndexAt(const ros_babel_fish::MessageTemplat
       ROS_WARN_STREAM("Filling Duration Array field NOT implemented yet");
       break;
     case ros_babel_fish::MessageTypes::String: {
-      BT::Expected<std::vector<std::string>> instance_ = tree_node_.getInput<std::vector<std::string>>(instance_port_name);
+      BT::Expected<std::vector<std::string>> instance_ =
+          tree_node_.getInput<std::vector<std::string>>(instance_port_name);
       if (!instance_)
       {
         throw BT::RuntimeError("missing required input [instance_]: ", instance_.error());
@@ -1074,6 +1076,7 @@ inline std::vector<std::string> convertFromString(StringView str)
     {
       if (tocken != "")
       {
+        boost::trim(tocken);
         tockens.push_back(tocken);
       }
     }

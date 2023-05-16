@@ -37,6 +37,8 @@ public:
 
   virtual bool isRunAlwaysActive();
 
+  virtual void onNewState(const std_msgs::BoolConstPtr& msg);
+
 protected:
   ros::NodeHandle& node_handle_;
   std::vector<std_msgs::Int16> children_status_;
@@ -46,6 +48,7 @@ protected:
   std::vector<ros::Subscriber> children_command_subscriber_;
   std::vector<boost::function<void(const std_msgs::BoolConstPtr&, const int&, std::string&)>>
       children_command_call_back_;
+  ros::Subscriber halt_subscriber_;
 
 private:
 };

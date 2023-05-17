@@ -51,6 +51,9 @@ void RosWrapper::UpdateAndPublishChildrenStatus(int i, int status)
     children_status_publisher_[i].publish(children_status_[i]);
   }
 }
+void RosWrapper::OnHalt()
+{
+}
 void RosWrapper::OnChildSuccess(int i)
 {
   UpdateAndPublishChildrenStatus(i, getSuccessCode());
@@ -122,6 +125,7 @@ void RosWrapper::onNewState(const std_msgs::BoolConstPtr& msg)
     if (msg->data)
     {
       ROS_INFO_STREAM("Halting Children Started for  : " << this->name());
+      OnHalt();
       haltChildren();
     }
   }

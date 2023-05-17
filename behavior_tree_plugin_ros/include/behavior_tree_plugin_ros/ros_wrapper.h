@@ -34,6 +34,7 @@ public:
   virtual void OnChildRunning(int i);
   virtual void OnChildCommandInitialize(int i);
   virtual void OnChildStatusInitialize(int i);
+  virtual void OnHalt();
 
   virtual bool isRunAlwaysActive();
 

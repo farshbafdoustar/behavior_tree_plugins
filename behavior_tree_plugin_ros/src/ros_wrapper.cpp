@@ -115,16 +115,16 @@ bool RosWrapper::isRunAlwaysActive()
 
 void RosWrapper::onNewState(const std_msgs::BoolConstPtr& msg)
 {
-  if(msg && msg->data)
-  {
-      haltChildren();
-  }
+  // if(msg && msg->data)
+  // {
+  //     haltChildren();
+  // }
+  ROS_INFO_STREAM("Halt Receieved for for : " << this->name());
 }
 void RosWrapper::initialize()
 {
-
   halt_subscriber_ = node_handle_.subscribe("halt", 1, &RosWrapper::onNewState, this);
-  
+
   const size_t children_count = children_nodes_.size();
 
   for (unsigned int i = 0; i < children_count; i++)

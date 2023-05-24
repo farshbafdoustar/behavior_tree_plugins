@@ -15,8 +15,8 @@ class RosWrapper : public BT::ControlNode
 public:
   RosWrapper(const std::string& name, const BT::NodeConfig& config, ros::NodeHandle& node_handle);
   virtual ~RosWrapper() override = default;
-  void initialize();
-  BT::NodeStatus tick() override;
+  virtual void initialize();
+  virtual BT::NodeStatus tick() override;
   void halt() override;
   static void Register(BT::BehaviorTreeFactory& factory, const std::string& registration_ID,
                        ros::NodeHandle& node_handle);

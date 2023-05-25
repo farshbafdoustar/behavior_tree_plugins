@@ -14,6 +14,7 @@ BT::PortsList RosWrapper::providedPorts()
 {
   return {
     BT::InputPort<bool>("run_always"),
+    BT::InputPort<double>("frequency"),
   };
 }
 
@@ -134,6 +135,17 @@ void RosWrapper::onNewState(const std_msgs::BoolConstPtr& msg)
 }
 void RosWrapper::initialize()
 {
+  ros::Time::init();
+  ros::Time::waitForValid();
+  last_tick_time_ = ros::Time::now();
+
+  BT::Expected<double> frequency = getInput<double>("frequency");
+  if (frequency)
+  {
+    frequency_ = frequency.value();
+  }
+  ROS_INFO_STREAM("RosWrapper initialized with frequency: " << frequency_);
+
   halt_subscriber_ = node_handle_.subscribe("halt", 1, &RosWrapper::onNewState, this);
 
   const size_t children_count = children_nodes_.size();
@@ -166,7 +178,30 @@ void RosWrapper::initialize()
 
 BT::NodeStatus RosWrapper::tick()
 {
+  // in simulation it could take time until getting correct time
+  if (last_tick_time_ > ros::Time::now())
+  {
+    last_tick_time_ = ros::Time::now();
+  }
+  ROS_DEBUG_STREAM("last_tick_time_  " << last_tick_time_);
+  ROS_DEBUG_STREAM("ros::Time::now()  " << ros::Time::now());
+  if (frequency_ > 0.0 && last_tick_time_ + ros::Duration(1.0 / frequency_) < ros::Time::now())
+  {
+    last_tick_time_ = ros::Time::now();
+    ROS_DEBUG_STREAM("tick  ");
+  }
+  else if (frequency_ == 0.0)
+  {
+    ROS_DEBUG_STREAM("frequency_==0  ");
+  }
+  else
+  {
+    ROS_DEBUG_STREAM("Nothing");
+    setStatus(BT::NodeStatus::RUNNING);
+    return BT::NodeStatus::RUNNING;
+  }
   setStatus(BT::NodeStatus::RUNNING);
+
   // ros::getGlobalCallbackQueue()->callAvailable(ros::WallDuration(0));
   const size_t children_count = children_nodes_.size();
 

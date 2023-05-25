@@ -50,6 +50,8 @@ protected:
   std::vector<boost::function<void(const std_msgs::BoolConstPtr&, const int&, std::string&)>>
       children_command_call_back_;
   ros::Subscriber halt_subscriber_;
+  ros::Time last_tick_time_;
+  double frequency_{ 0.0 };
 
 private:
 };

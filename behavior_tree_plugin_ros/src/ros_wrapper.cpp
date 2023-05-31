@@ -8,7 +8,7 @@ RosWrapper::RosWrapper(const std::string& name, const BT::NodeConfig& config, ro
   : BT::ControlNode(name, config), node_handle_(node_handle)
 
 {
-  ROS_INFO_STREAM("RosWrapper for : " << this->name());
+  ROS_INFO_STREAM_NAMED("RosWrapper", "RosWrapper for : " << this->name());
 }
 BT::PortsList RosWrapper::providedPorts()
 {
@@ -95,7 +95,7 @@ void RosWrapper::OnChildCommandInitialize(int i)
 
   auto command_call_back = [&](const std_msgs::BoolConstPtr& msg, const int& i, std::string& topic_name) {
     children_command_[i] = msg->data;
-    ROS_INFO_STREAM("callback received:" << topic_name);
+    ROS_INFO_STREAM_NAMED("RosWrapper", "callback received:" << topic_name);
   };
   children_command_call_back_.push_back(command_call_back);
 
@@ -119,19 +119,19 @@ bool RosWrapper::isRunAlwaysActive()
 
 void RosWrapper::onNewState(const std_msgs::BoolConstPtr& msg)
 {
-  ROS_INFO_STREAM("Halt Receieved for : " << this->name());
+  ROS_INFO_STREAM_NAMED("RosWrapper", "Halt Receieved for : " << this->name());
   if (msg)
   {
-    ROS_INFO_STREAM("Receieved  " << msg->data << " for : " << this->name());
+    ROS_INFO_STREAM_NAMED("RosWrapper", "Receieved  " << msg->data << " for : " << this->name());
     if (msg->data)
     {
-      ROS_INFO_STREAM("Halting Children Started for  : " << this->name());
+      ROS_INFO_STREAM_NAMED("RosWrapper", "Halting Children Started for  : " << this->name());
       OnHalt();
       haltChildren();
     }
   }
 
-  ROS_INFO_STREAM("Halting Children Finished for  : " << this->name());
+  ROS_INFO_STREAM_NAMED("RosWrapper", "Halting Children Finished for  : " << this->name());
 }
 void RosWrapper::initialize()
 {
@@ -144,7 +144,7 @@ void RosWrapper::initialize()
   {
     frequency_ = frequency.value();
   }
-  ROS_INFO_STREAM("RosWrapper initialized with frequency: " << frequency_);
+  ROS_INFO_STREAM_NAMED("RosWrapper", "RosWrapper initialized with frequency: " << frequency_);
 
   halt_subscriber_ = node_handle_.subscribe("halt", 1, &RosWrapper::onNewState, this);
 
@@ -183,20 +183,20 @@ BT::NodeStatus RosWrapper::tick()
   {
     last_tick_time_ = ros::Time::now();
   }
-  ROS_DEBUG_STREAM("last_tick_time_  " << last_tick_time_);
-  ROS_DEBUG_STREAM("ros::Time::now()  " << ros::Time::now());
+  ROS_DEBUG_STREAM_NAMED("RosWrapper", "last_tick_time_  " << last_tick_time_);
+  ROS_DEBUG_STREAM_NAMED("RosWrapper", "ros::Time::now()  " << ros::Time::now());
   if (frequency_ > 0.0 && last_tick_time_ + ros::Duration(1.0 / frequency_) < ros::Time::now())
   {
     last_tick_time_ = ros::Time::now();
-    ROS_DEBUG_STREAM("tick  ");
+    ROS_DEBUG_STREAM_NAMED("RosWrapper", "tick  ");
   }
   else if (frequency_ == 0.0)
   {
-    ROS_DEBUG_STREAM("frequency_==0  ");
+    ROS_DEBUG_STREAM_NAMED("RosWrapper", "frequency_==0  ");
   }
   else
   {
-    ROS_DEBUG_STREAM("Nothing");
+    ROS_DEBUG_STREAM_NAMED("RosWrapper", "Nothing");
     setStatus(BT::NodeStatus::RUNNING);
     return BT::NodeStatus::RUNNING;
   }
@@ -232,6 +232,7 @@ BT::NodeStatus RosWrapper::tick()
           break;
         case BT::NodeStatus::RUNNING:
           // only chnage it for non indicators
+          // TODO: Indicators should not be in this state. Makes everythong slow
           if (!isRunAlwaysActive())
           {
             OnChildRunning(i);

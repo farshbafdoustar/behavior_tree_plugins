@@ -41,6 +41,7 @@ private:
   ros_babel_fish::BabelFish* fish_;
   TreeNodeManager* tree_node_manager_;
   bool is_statefull_ = false;
+  bool activate_callback_in_tick_=true;
 
   bool is_statefull_error_shown = false;
 };

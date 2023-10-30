@@ -32,6 +32,13 @@ SubscribeAnyTopic::SubscribeAnyTopic(const std::string& name, const BT::NodeConf
     is_statefull_ = is_statefull.value();
   }
 
+  BT::Expected<bool> activate_callback_in_tick = getInput<bool>("activate_callback_in_tick");
+
+  if (activate_callback_in_tick)
+  {
+    activate_callback_in_tick_ = activate_callback_in_tick.value();
+  }
+
   ROS_INFO_STREAM("SubscribeAnyTopic: " << topic_name_);
   subscriber_ = node_handle_.subscribe(topic_name_, 1, &SubscribeAnyTopic::callback, this);
 }
@@ -46,6 +53,7 @@ BT::PortsList SubscribeAnyTopic::getPorts(std::string topic_type, ros_babel_fish
   BT::PortsList ports;
   ports.insert(BT::InputPort<std::string>("topic_name"));
   ports.insert(BT::InputPort<bool>("is_statefull"));
+  ports.insert(BT::InputPort<bool>("activate_callback_in_tick"));
 
   TreeNodeManager::makePortList(ports, BT::PortDirection::OUTPUT, message_description_->message_template, "");
   return ports;
@@ -57,6 +65,10 @@ BT::PortsList SubscribeAnyTopic::getPorts(std::string topic_type)
 }
 BT::NodeStatus SubscribeAnyTopic::tick()
 {
+  if(activate_callback_in_tick_)
+  {
+    ros::getGlobalCallbackQueue()->callAvailable(ros::WallDuration(0));
+  }
   if (is_statefull_)
   {
     if (message_)
